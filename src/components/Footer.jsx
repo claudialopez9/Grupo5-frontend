@@ -4,9 +4,10 @@ function Footer() {
   const anio = new Date().getFullYear()
 
   return (
-    <footer className="bg-dark text-light py-3 mt-5">
-      <Container className="text-center">
-        <small>© {anio} Biblioteca UTN - Todos los derechos reservados</small>
+    <footer className="border-top">
+      <Container className="py-4 d-flex flex-column flex-md-row justify-content-between gap-2 small text-body-secondary">
+        <span>© {anio} Biblioteca UTN Facultad Regional Tucumán. Todos los derechos reservados.</span>
+        <span>BiblioFRT es un proyecto del Grupo 5</span>
       </Container>
     </footer>
   )

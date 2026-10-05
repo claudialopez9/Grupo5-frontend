@@ -1,1 +1,110 @@
+/* ===== BiblioFRT: colores y tipografía base ===== */
+:root {
+  --bf-naranja: #E8590C;
+  --bf-naranja-oscuro: #C2410C;
+  --bf-tinta: #1F2125;
+  --bf-fondo-busqueda: #F4F3F0;
 
+  /* Variables de Bootstrap que sobrescribimos */
+  --bs-body-font-family: 'Schibsted Grotesk', system-ui, sans-serif;
+  --bs-body-color: #1F2125;
+  --bs-success-rgb: 18, 122, 82;
+  --bs-danger-rgb: 180, 35, 24;
+  --bs-link-color-rgb: 194, 65, 12;
+}
+
+/* ===== Catálogo: zona del buscador ===== */
+.hero-busqueda {
+  background-color: var(--bf-fondo-busqueda);
+}
+
+.titulo-principal {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  max-width: 16ch;
+}
+
+.buscador {
+  max-width: 640px;
+}
+
+.buscador .form-control {
+  height: 56px;
+  border: 2px solid var(--bf-tinta);
+  border-radius: 12px;
+}
+
+/* ===== LibroCard: tapa generada y puntos de ejemplares ===== */
+.tapa-libro {
+  height: 250px;
+  padding: 18px 20px 20px 26px;
+  border-radius: 4px 12px 12px 4px;
+  box-shadow: inset 8px 0 0 rgba(0, 0, 0, 0.22),
+              inset 10px 0 0 rgba(255, 255, 255, 0.12);
+}
+
+.tapa-titulo {
+  font-size: 1.55rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+}
+
+.punto-ejemplar {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.punto-vacio {
+  box-shadow: inset 0 0 0 2px #B9B7B1;
+}
+/* ===== Estructura: footer siempre abajo ===== */
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#root > main {
+  flex-grow: 1;
+}
+
+/* ===== Navbar ===== */
+.marca {
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--bf-tinta);
+}
+
+.logo-lomos {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 26px;
+}
+
+.logo-lomos span {
+  width: 7px;
+  border-radius: 2px;
+  background-color: var(--bf-naranja);
+}
+
+.logo-lomos span:nth-child(1) { height: 26px; }
+.logo-lomos span:nth-child(2) { height: 20px; background-color: var(--bf-tinta); }
+.logo-lomos span:nth-child(3) { height: 23px; opacity: 0.55; }
+
+.navbar-bibliofrt .nav-link {
+  font-weight: 500;
+  padding-block: 0.75rem;
+}
+
+.navbar-bibliofrt .nav-link.active {
+  font-weight: 700;
+  color: var(--bf-tinta);
+  box-shadow: inset 0 -3px 0 var(--bf-naranja);
+}
