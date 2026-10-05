@@ -108,3 +108,42 @@
   color: var(--bf-tinta);
   box-shadow: inset 0 -3px 0 var(--bf-naranja);
 }
+/* ===== Inicio: estante de libros ===== */
+.estante {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  padding: 0 8px;
+  overflow-x: auto;
+}
+
+.lomo {
+  flex-shrink: 0;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  padding: 14px 0;
+  border-radius: 3px 3px 2px 2px;
+  color: #FFFFFF;
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1.15;
+  box-shadow: inset -5px 0 0 rgba(0, 0, 0, 0.18);
+}
+
+.estante-tabla {
+  height: 10px;
+  border-radius: 3px;
+  background-color: var(--bf-tinta);
+}
+
+/* ===== Inicio: accesos ===== */
+.acceso {
+  color: var(--bf-tinta);
+  border-radius: 12px;
+  transition: background-color 0.15s;
+}
+
+.acceso:hover {
+  color: var(--bf-tinta);
+  background-color: var(--bf-fondo-busqueda);
+}
