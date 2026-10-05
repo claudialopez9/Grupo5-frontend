@@ -34,22 +34,24 @@ function Inicio() {
             </Col>
 
             <Col lg={6}>
-              <ul className="estante list-unstyled mb-0" aria-label="Libros del catálogo">
-                {libros.map((libro) => (
-                  <li
-                    key={libro.id}
-                    className="lomo"
-                    style={{
-                      backgroundColor: coloresCategoria[libro.categoria] || '#3A3C42',
-                      height: `${210 + (libro.titulo.length % 5) * 20}px`,
-                      width: `${50 + (libro.autor.length % 3) * 8}px`,
-                    }}
-                  >
-                    {libro.titulo}
-                  </li>
-                ))}
-              </ul>
-              <div className="estante-tabla" aria-hidden="true"></div>
+              <div className="estante-contenedor">
+                <ul className="estante list-unstyled mb-0" aria-label="Libros del catálogo">
+                  {libros.map((libro) => (
+                    <li
+                      key={libro.id}
+                      className="lomo"
+                      style={{
+                        backgroundColor: coloresCategoria[libro.categoria] || '#3A3C42',
+                        height: `${210 + (libro.titulo.length % 5) * 20}px`,
+                        width: `${50 + (libro.autor.length % 3) * 8}px`,
+                      }}
+                    >
+                      {libro.titulo}
+                    </li>
+                  ))}
+                </ul>
+                <div className="estante-tabla" aria-hidden="true"></div>
+              </div>
             </Col>
           </Row>
         </Container>

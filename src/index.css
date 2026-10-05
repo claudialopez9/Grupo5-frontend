@@ -24,6 +24,8 @@
   letter-spacing: -0.03em;
   line-height: 1.05;
   max-width: 16ch;
+  text-wrap: balance;
+  
 }
 
 .buscador {
@@ -128,6 +130,8 @@
   font-weight: 700;
   line-height: 1.15;
   box-shadow: inset -5px 0 0 rgba(0, 0, 0, 0.18);
+  display: flex;
+  align-items: center;
 }
 
 .estante-tabla {
@@ -139,11 +143,17 @@
 /* ===== Inicio: accesos ===== */
 .acceso {
   color: var(--bf-tinta);
-  border-radius: 12px;
+  border-radius: 0;
   transition: background-color 0.15s;
 }
 
 .acceso:hover {
   color: var(--bf-tinta);
   background-color: var(--bf-fondo-busqueda);
+}
+
+.estante-contenedor {
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
 }
