@@ -1,5 +1,5 @@
 import{Container, Row, Col} from 'react-bootstrap'; 
-import AlumnosCard from '../components/alumnosCard';
+import AlumnosCard from '../components/AlumnosCard';
 import{ alumnos } from '../data/alumnos';
 import useSEO from '../hooks/useSEO';
 
