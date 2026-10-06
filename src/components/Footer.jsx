@@ -1,16 +1,20 @@
-import { Container } from 'react-bootstrap'
-
 function Footer() {
-  const anio = new Date().getFullYear()
-
   return (
-    <footer className="border-top">
-      <Container className="py-4 d-flex flex-column flex-md-row justify-content-between gap-2 small text-body-secondary">
-        <span>© {anio} Biblioteca UTN Facultad Regional Tucumán. Todos los derechos reservados.</span>
-        <span>BiblioFRT es un proyecto del Grupo 5</span>
-      </Container>
+    <footer className="bg-dark text-light py-1 mt-5">
+      <div className="container d-flex flex-column flex-md-row align-items-center justify-content-between">
+        <div className="d-flex align-items-center mb-1 mb-md-0">
+          <img
+            src="/img/logo-footer.svg"
+            alt="Logo Biblioteca UTN"
+            height="60"
+            className="me-3"
+          />
+        </div>
+
+        <small>© 2026 Biblioteca UTN — Facultad Regional Tucumán</small>
+      </div>
     </footer>
-  )
+  );
 }
 
-export default Footer
+export default Footer;
