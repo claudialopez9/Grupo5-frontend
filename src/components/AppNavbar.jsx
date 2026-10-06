@@ -3,7 +3,7 @@ import { Link, NavLink } from 'react-router-dom'
 
 function AppNavbar() {
   return (
-    <Navbar expand="md" bg="dark" sticky="top" collapseOnSelect className="navbar-bibliofrt border-bottom py-2">
+        <Navbar expand="md" bg="dark" data-bs-theme="dark" sticky="top" collapseOnSelect className="navbar-bibliofrt border-bottom py-2">
       <Container>
         <Navbar.Brand as={Link} to="/" className="marca d-flex align-items-center gap-2">
           <img src="/img/logo-navbar.svg" alt="logo biblioteca" height="40" ></img>
