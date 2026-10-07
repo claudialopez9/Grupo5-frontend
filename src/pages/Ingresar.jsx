@@ -38,7 +38,7 @@ function Ingresar() {
       timer: 1800,
       showConfirmButton: false,
     })
-    navigate('/')
+    navigate(sesion.rol === 'bibliotecario' ? '/panel' : '/')
   }
 
   return (

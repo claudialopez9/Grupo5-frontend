@@ -236,3 +236,10 @@
   object-fit: cover;
   box-shadow: 0 0 0 4px #FFFFFF, 0 0 0 6px var(--bf-naranja);
 }
+
+.numero-panel {
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
