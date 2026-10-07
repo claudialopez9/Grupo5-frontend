@@ -3,14 +3,11 @@ import { Link, NavLink } from 'react-router-dom'
 
 function AppNavbar() {
   return (
-    <Navbar expand="md" bg="white" sticky="top" collapseOnSelect className="navbar-bibliofrt border-bottom py-2">
+        <Navbar expand="md" bg="dark" data-bs-theme="dark" sticky="top" collapseOnSelect className="navbar-bibliofrt border-bottom py-2">
       <Container>
         <Navbar.Brand as={Link} to="/" className="marca d-flex align-items-center gap-2">
-          <span className="logo-lomos" aria-hidden="true">
-            <span></span>
-            <span></span>
-            <span></span>
-          </span>
+          <img src="/img/logo-navbar.svg" alt="logo biblioteca" height="40" ></img>
+           
           BiblioFRT
         </Navbar.Brand>
 
@@ -22,6 +19,7 @@ function AppNavbar() {
             <Nav.Link as={NavLink} to="/catalogo" eventKey="catalogo">Catálogo</Nav.Link>
             <Nav.Link as={NavLink} to="/prestamos" eventKey="prestamos">Préstamos</Nav.Link>
             <Nav.Link as={NavLink} to="/alumnos" eventKey="alumnos">Alumnos</Nav.Link>
+            <Nav.Link as={NavLink} to="/sobre-nosotros" eventKey="sobre-nosotros">Sobre Nosotros</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>
