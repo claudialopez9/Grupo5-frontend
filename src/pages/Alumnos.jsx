@@ -1,18 +1,24 @@
 import { useState } from 'react'
 import { Container, Row, Col, Form } from 'react-bootstrap'
 import AlumnosCard from '../components/AlumnosCard'
-import { alumnos } from '../data/alumnos'
+import { useDatos } from '../context/DatosContext'
 import useSEO from '../hooks/useSEO'
 
 function Alumnos() {
   useSEO('Alumnos', 'Listado de alumnos registrados en la biblioteca de la UTN y sus préstamos activos.')
 
+  const { alumnos, prestamos } = useDatos()
   const [busqueda, setBusqueda] = useState('')
   const texto = busqueda.trim().toLowerCase()
 
   const alumnosFiltrados = alumnos.filter((alumno) =>
     `${alumno.nombre} ${alumno.apellido} ${alumno.legajo}`.toLowerCase().includes(texto)
   )
+
+  // Cuenta los préstamos de un alumno que todavía no devolvió
+  function contarActivos(alumnoId) {
+    return prestamos.filter((p) => p.alumnoId === alumnoId && p.estado !== 'Devuelto').length
+  }
 
   return (
     <>
@@ -47,7 +53,7 @@ function Alumnos() {
                     apellido={alumno.apellido}
                     legajo={alumno.legajo}
                     carrera={alumno.carrera}
-                    prestamosActivos={alumno.prestamosActivos}
+                    prestamosActivos={contarActivos(alumno.id)}
                   />
                 </Col>
               ))}

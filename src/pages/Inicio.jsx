@@ -1,7 +1,7 @@
 import { Container, Row, Col, Button } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import useSEO from '../hooks/useSEO'
-import { libros } from '../data/libros'
+import { useDatos } from '../context/DatosContext'
 import { coloresCategoria } from '../data/categorias'
 
 const accesos = [
@@ -12,7 +12,7 @@ const accesos = [
 
 function Inicio() {
   useSEO('Inicio', 'Sistema de gestión de la biblioteca de la UTN: catálogo, alumnos y préstamos.')
-
+  const { libros } = useDatos()
   return (
     <>
       <section className="hero-busqueda">
