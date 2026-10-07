@@ -5,6 +5,7 @@ import { useSesion } from '../context/SesionContext'
 function AppNavbar() {
   const { usuario, salir } = useSesion()
   const navigate = useNavigate()
+  const esBibliotecario = usuario?.rol === 'bibliotecario'
 
   function manejarSalida() {
     salir()
@@ -25,8 +26,15 @@ function AppNavbar() {
           <Nav className="ms-auto align-items-md-center">
             <Nav.Link as={NavLink} to="/" end eventKey="inicio">Inicio</Nav.Link>
             <Nav.Link as={NavLink} to="/catalogo" eventKey="catalogo">Catálogo</Nav.Link>
-            <Nav.Link as={NavLink} to="/prestamos" eventKey="prestamos">Préstamos</Nav.Link>
-            <Nav.Link as={NavLink} to="/alumnos" eventKey="alumnos">Alumnos</Nav.Link>
+
+            {esBibliotecario && (
+              <>
+                <Nav.Link as={NavLink} to="/panel" eventKey="panel">Panel</Nav.Link>
+                <Nav.Link as={NavLink} to="/prestamos" eventKey="prestamos">Préstamos</Nav.Link>
+                <Nav.Link as={NavLink} to="/alumnos" eventKey="alumnos">Alumnos</Nav.Link>
+              </>
+            )}
+
             <Nav.Link as={NavLink} to="/sobre-nosotros" eventKey="sobre-nosotros">Sobre Nosotros</Nav.Link>
 
             {usuario ? (

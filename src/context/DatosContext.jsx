@@ -4,13 +4,13 @@ import { Container, Spinner, Alert } from 'react-bootstrap'
 const DatosContext = createContext(null)
 const CLAVE_REGISTROS = 'bibliofrt-registros'
 
-// Alumnos y usuarios que se registraron desde la página (quedan en este navegador)
+
 function leerRegistros() {
   const guardados = localStorage.getItem(CLAVE_REGISTROS)
   return guardados ? JSON.parse(guardados) : { alumnos: [], usuarios: [] }
 }
 
-// Pide un archivo JSON y avisa si la respuesta no fue exitosa
+
 async function pedirJSON(ruta) {
   const respuesta = await fetch(ruta)
   if (!respuesta.ok) {
@@ -69,6 +69,23 @@ export function DatosProvider({ children }) {
     return { nuevoAlumno, nuevoUsuario }
   }
 
+  
+  function registrarDevolucion(prestamoId) {
+    const prestamo = prestamos.find((p) => p.id === prestamoId)
+    if (!prestamo || prestamo.estado === 'Devuelto') return
+
+    setPrestamos((anteriores) =>
+      anteriores.map((p) => (p.id === prestamoId ? { ...p, estado: 'Devuelto' } : p))
+    )
+    setLibros((anteriores) =>
+      anteriores.map((libro) =>
+        libro.id === prestamo.libroId
+          ? { ...libro, disponibles: Math.min(libro.disponibles + 1, libro.total) }
+          : libro
+      )
+    )
+  }
+
   if (cargando) {
     return (
       <div className="d-flex justify-content-center py-5 my-5">
@@ -91,7 +108,7 @@ export function DatosProvider({ children }) {
   }
 
   return (
-    <DatosContext.Provider value={{ libros, alumnos, prestamos, usuarios, agregarRegistro }}>
+    <DatosContext.Provider value={{ libros, alumnos, prestamos, usuarios, agregarRegistro, registrarDevolucion }}>
       {children}
     </DatosContext.Provider>
   )
