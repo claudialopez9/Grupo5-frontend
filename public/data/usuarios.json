@@ -1,0 +1,9 @@
+[
+  { "id": 1, "usuario": "bibliotecario", "password": "1234", "rol": "bibliotecario", "alumnoId": null },
+  { "id": 2, "usuario": "45012", "password": "1234", "rol": "alumno", "alumnoId": 1 },
+  { "id": 3, "usuario": "45230", "password": "1234", "rol": "alumno", "alumnoId": 2 },
+  { "id": 4, "usuario": "44871", "password": "1234", "rol": "alumno", "alumnoId": 3 },
+  { "id": 5, "usuario": "45544", "password": "1234", "rol": "alumno", "alumnoId": 4 },
+  { "id": 6, "usuario": "45109", "password": "1234", "rol": "alumno", "alumnoId": 5 },
+  { "id": 7, "usuario": "44990", "password": "1234", "rol": "alumno", "alumnoId": 6 }
+]
