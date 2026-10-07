@@ -1,14 +1,16 @@
 import { useState } from 'react'
 import { Container, Row, Col, Form, Button } from 'react-bootstrap'
 import LibroCard from '../components/LibroCard'
-import { libros } from '../data/libros'
+import { useDatos } from '../context/DatosContext'
 import useSEO from '../hooks/useSEO'
 
 // Lista de categorías sin repetir, con "Todas" al principio
-const categorias = ['Todas', ...new Set(libros.map((libro) => libro.categoria))]
+
 
 function Catalogo() {
   useSEO('Catálogo de libros', 'Consultá el catálogo de la biblioteca de la UTN y la disponibilidad de cada libro.')
+  const { libros } = useDatos()
+  const categorias = ['Todas', ...new Set(libros.map((libro) => libro.categoria))]
 
   const [busqueda, setBusqueda] = useState('')
   const [categoria, setCategoria] = useState('Todas')

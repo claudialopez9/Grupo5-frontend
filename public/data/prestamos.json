@@ -1,0 +1,8 @@
+[
+  { "id": 1, "alumnoId": 1, "libroId": 1, "fechaPrestamo": "2026-09-28", "fechaDevolucion": "2026-10-12", "estado": "Activo" },
+  { "id": 2, "alumnoId": 3, "libroId": 3, "fechaPrestamo": "2026-09-10", "fechaDevolucion": "2026-09-24", "estado": "Vencido" },
+  { "id": 3, "alumnoId": 2, "libroId": 2, "fechaPrestamo": "2026-09-01", "fechaDevolucion": "2026-09-15", "estado": "Devuelto" },
+  { "id": 4, "alumnoId": 3, "libroId": 4, "fechaPrestamo": "2026-10-01", "fechaDevolucion": "2026-10-15", "estado": "Activo" },
+  { "id": 5, "alumnoId": 5, "libroId": 5, "fechaPrestamo": "2026-09-25", "fechaDevolucion": "2026-10-09", "estado": "Activo" },
+  { "id": 6, "alumnoId": 1, "libroId": 6, "fechaPrestamo": "2026-08-20", "fechaDevolucion": "2026-09-03", "estado": "Devuelto" }
+]
