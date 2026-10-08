@@ -1,0 +1,8 @@
+[
+  { "id": 1, "nombre": "Lucía", "apellido": "Gómez", "legajo": "45012", "carrera": "Ing. en Sistemas", "correo": "lucia.gomez@ejemplo.com" },
+  { "id": 2, "nombre": "Martín", "apellido": "Rojas", "legajo": "45230", "carrera": "Ing. Civil", "correo": "martin.rojas@ejemplo.com" },
+  { "id": 3, "nombre": "Sofía", "apellido": "Paz", "legajo": "44871", "carrera": "Ing. Eléctrica", "correo": "sofia.paz@ejemplo.com" },
+  { "id": 4, "nombre": "Tomás", "apellido": "Ledesma", "legajo": "45544", "carrera": "Ing. Mecánica", "correo": "tomas.ledesma@ejemplo.com" },
+  { "id": 5, "nombre": "Valentina", "apellido": "Cruz", "legajo": "45109", "carrera": "Ing. Química", "correo": "valentina.cruz@ejemplo.com" },
+  { "id": 6, "nombre": "Joaquín", "apellido": "Herrera", "legajo": "44990", "carrera": "Ing. en Sistemas", "correo": "joaquin.herrera@ejemplo.com" }
+]

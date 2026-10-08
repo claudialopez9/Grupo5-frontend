@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Container, Table, Badge, Button } from 'react-bootstrap'
-import { prestamos } from '../data/prestamos'
-import { libros } from '../data/libros'
+import { useDatos } from '../context/DatosContext'
 import { coloresCategoria } from '../data/categorias'
+import { formatearFecha, detalleEstado } from '../utils/fechas'
 import useSEO from '../hooks/useSEO'
 
 const estilosEstado = {
@@ -14,41 +14,20 @@ const estilosEstado = {
 const filtros = ['Todos', 'Activo', 'Vencido', 'Devuelto']
 const nombresFiltro = { Todos: 'Todos', Activo: 'Activos', Vencido: 'Vencidos', Devuelto: 'Devueltos' }
 
-// '2026-09-28' -> '28/09/2026'
-function formatearFecha(fecha) {
-  const [anio, mes, dia] = fecha.split('-')
-  return `${dia}/${mes}/${anio}`
-}
-
-// Días que faltan hasta una fecha (negativo si ya pasó)
-function diasHasta(fecha) {
-  const hoy = new Date()
-  hoy.setHours(0, 0, 0, 0)
-  const destino = new Date(`${fecha}T00:00:00`)
-  return Math.round((destino - hoy) / (1000 * 60 * 60 * 24))
-}
-
-function detalleEstado(prestamo) {
-  if (prestamo.estado === 'Devuelto') return ''
-  const dias = diasHasta(prestamo.fechaDevolucion)
-  if (prestamo.estado === 'Vencido' || dias < 0) {
-    const demora = Math.abs(dias)
-    return demora === 1 ? '1 día de demora' : `${demora} días de demora`
-  }
-  if (dias === 0) return 'Vence hoy'
-  if (dias === 1) return 'Vence mañana'
-  return `Vence en ${dias} días`
-}
-
-function colorLibro(titulo) {
-  const libro = libros.find((l) => l.titulo === titulo)
-  return coloresCategoria[libro?.categoria] || '#3A3C42'
-}
-
 function Prestamos() {
   useSEO('Préstamos', 'Seguimiento de préstamos activos, vencidos y devoluciones de la biblioteca de la UTN.')
 
+  const { prestamos, alumnos, libros } = useDatos()
   const [filtro, setFiltro] = useState('Todos')
+
+  function buscarLibro(id) {
+    return libros.find((libro) => libro.id === id)
+  }
+
+  function nombreAlumno(id) {
+    const alumno = alumnos.find((a) => a.id === id)
+    return alumno ? `${alumno.nombre} ${alumno.apellido}` : 'Alumno no encontrado'
+  }
 
   const lista = filtro === 'Todos' ? prestamos : prestamos.filter((p) => p.estado === filtro)
 
@@ -93,16 +72,21 @@ function Prestamos() {
               </thead>
               <tbody>
                 {lista.map((p) => {
+                  const libro = buscarLibro(p.libroId)
                   const detalle = detalleEstado(p)
                   return (
                     <tr key={p.id}>
                       <td>
                         <div className="d-flex align-items-center gap-3">
-                          <span className="lomo-mini" style={{ backgroundColor: colorLibro(p.libro) }} aria-hidden="true"></span>
-                          <span className="fw-semibold">{p.libro}</span>
+                          <span
+                            className="lomo-mini"
+                            style={{ backgroundColor: coloresCategoria[libro?.categoria] || '#3A3C42' }}
+                            aria-hidden="true"
+                          ></span>
+                          <span className="fw-semibold">{libro ? libro.titulo : 'Libro no encontrado'}</span>
                         </div>
                       </td>
-                      <td>{p.alumno}</td>
+                      <td>{nombreAlumno(p.alumnoId)}</td>
                       <td>{formatearFecha(p.fechaPrestamo)}</td>
                       <td>{formatearFecha(p.fechaDevolucion)}</td>
                       <td>
