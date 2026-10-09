@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Container, Row, Col, Form } from 'react-bootstrap'
 import AlumnosCard from '../components/AlumnosCard'
 import { useDatos } from '../context/DatosContext'
+ import { estaEnPoder } from '../utils/fechas'
 import useSEO from '../hooks/useSEO'
 
 function Alumnos() {
@@ -16,9 +17,10 @@ function Alumnos() {
   )
 
   // Cuenta los préstamos de un alumno que todavía no devolvió
-  function contarActivos(alumnoId) {
-    return prestamos.filter((p) => p.alumnoId === alumnoId && p.estado !== 'Devuelto').length
-  }
+     function contarActivos(alumnoId) {
+     return prestamos.filter((p) => p.alumnoId === alumnoId && estaEnPoder(p)).length
+   }
+
 
   return (
     <>

@@ -1,15 +1,20 @@
 import { useState } from 'react'
 import { Container, Row, Col, Form, Button } from 'react-bootstrap'
+import { Link } from 'react-router-dom'
+import Swal from 'sweetalert2'
 import LibroCard from '../components/LibroCard'
 import { useDatos } from '../context/DatosContext'
+import { useSesion } from '../context/SesionContext'
 import useSEO from '../hooks/useSEO'
-
-// Lista de categorías sin repetir, con "Todas" al principio
-
 
 function Catalogo() {
   useSEO('Catálogo de libros', 'Consultá el catálogo de la biblioteca de la UTN y la disponibilidad de cada libro.')
-  const { libros } = useDatos()
+
+  const { libros, prestamos, solicitarPrestamo } = useDatos()
+  const { usuario } = useSesion()
+  const esAlumno = usuario?.rol === 'alumno'
+
+  // Lista de categorías sin repetir, con "Todas" al principio
   const categorias = ['Todas', ...new Set(libros.map((libro) => libro.categoria))]
 
   const [busqueda, setBusqueda] = useState('')
@@ -19,15 +24,76 @@ function Catalogo() {
 
   const librosFiltrados = libros.filter((libro) => {
     const coincideCategoria = categoria === 'Todas' || libro.categoria === categoria
-    const coincideTexto = `${libro.titulo} ${libro.autor} ${libro.isbn}`
-      .toLowerCase()
-      .includes(texto)
+    const coincideTexto = `${libro.titulo} ${libro.autor} ${libro.isbn}`.toLowerCase().includes(texto)
     return coincideCategoria && coincideTexto
   })
 
   function verTodo() {
     setBusqueda('')
     setCategoria('Todas')
+  }
+
+  // ¿El alumno ya pidió o tiene este libro?
+  function yaLoPidio(libroId) {
+    return prestamos.some(
+      (p) => p.alumnoId === usuario.alumnoId && p.libroId === libroId && p.estado !== 'Devuelto'
+    )
+  }
+
+  function manejarSolicitud(libro) {
+    Swal.fire({
+      icon: 'question',
+      title: '¿Pedir este libro?',
+      text: `Te reservamos un ejemplar de "${libro.titulo}" para que lo retires en la biblioteca.`,
+      showCancelButton: true,
+      confirmButtonText: 'Pedir libro',
+      cancelButtonText: 'Volver',
+      confirmButtonColor: '#1F2125',
+    }).then((respuesta) => {
+      if (!respuesta.isConfirmed) return
+
+      const resultado = solicitarPrestamo(usuario.alumnoId, libro.id)
+      if (resultado.ok) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Te reservamos el libro',
+          text: 'Pasá a retirarlo por la biblioteca. Lo vas a ver en Mi biblioteca, en "Para retirar".',
+          confirmButtonText: 'Entendido',
+          confirmButtonColor: '#1F2125',
+        })
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'No pudimos reservar el libro',
+          text: resultado.mensaje,
+          confirmButtonText: 'Entendido',
+          confirmButtonColor: '#1F2125',
+        })
+      }
+    })
+  }
+
+  // Qué botón lleva cada libro según quién está mirando
+  function botonDelLibro(libro) {
+    if (!usuario) {
+      return (
+        <Button as={Link} to="/ingresar" variant="outline-dark" className="w-100">
+          Ingresá para pedirlo
+        </Button>
+      )
+    }
+    if (!esAlumno) return null
+    if (yaLoPidio(libro.id)) {
+      return <Button variant="outline-secondary" className="w-100" disabled>Ya lo pediste</Button>
+    }
+    if (libro.disponibles === 0) {
+      return <Button variant="outline-secondary" className="w-100" disabled>Sin ejemplares</Button>
+    }
+    return (
+      <Button variant="dark" className="w-100" onClick={() => manejarSolicitud(libro)}>
+        Pedir prestado
+      </Button>
+    )
   }
 
   return (
@@ -80,7 +146,9 @@ function Catalogo() {
                     categoria={libro.categoria}
                     disponibles={libro.disponibles}
                     total={libro.total}
-                  />
+                  >
+                    {botonDelLibro(libro)}
+                  </LibroCard>
                 </Col>
               ))}
             </Row>
