@@ -8,6 +8,7 @@ import SobreNosotros from '../../pages/SobreNosotros'
 import Ingresar from '../../pages/Ingresar'
 import Registrarse from '../../pages/Registrarse'
 import Panel from '../../pages/Panel'
+import MiBiblioteca from '../../pages/MiBiblioteca'
 import NotFound from '../../pages/NotFound'
 
 function Rutas() {
@@ -22,6 +23,8 @@ function Rutas() {
       <Route path="/panel" element={<RutaProtegida rol="bibliotecario"><Panel /></RutaProtegida>} />
       <Route path="/prestamos" element={<RutaProtegida rol="bibliotecario"><Prestamos /></RutaProtegida>} />
       <Route path="/alumnos" element={<RutaProtegida rol="bibliotecario"><Alumnos /></RutaProtegida>} />
+
+      <Route path="/mi-biblioteca" element={<RutaProtegida rol="alumno"><MiBiblioteca /></RutaProtegida>} />
 
       <Route path="*" element={<NotFound />} />
     </Routes>
