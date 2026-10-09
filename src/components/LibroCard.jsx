@@ -1,6 +1,6 @@
 import { coloresCategoria } from '../data/categorias'
 
-function LibroCard({ titulo, autor, isbn, categoria, disponibles, total }) {
+function LibroCard({ titulo, autor, isbn, categoria, disponibles, total, children }) {
   const hayDisponibles = disponibles > 0
   const color = coloresCategoria[categoria] || '#3A3C42'
 
@@ -31,13 +31,13 @@ function LibroCard({ titulo, autor, isbn, categoria, disponibles, total }) {
             ))}
           </span>
           <span className={`fw-bold ${hayDisponibles ? 'text-success' : 'text-danger'}`}>
-            {hayDisponibles
-              ? `${disponibles} de ${total} disponibles`
-              : `Prestados los ${total}`}
+            {hayDisponibles ? `${disponibles} de ${total} disponibles` : `Prestados los ${total}`}
           </span>
         </div>
         <span className="small text-body-secondary">ISBN {isbn}</span>
       </div>
+
+      {children && <div className="mt-auto">{children}</div>}
     </article>
   )
 }

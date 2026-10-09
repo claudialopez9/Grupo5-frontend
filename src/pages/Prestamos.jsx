@@ -2,20 +2,27 @@ import { useState } from 'react'
 import { Container, Table, Badge, Button } from 'react-bootstrap'
 import { useDatos } from '../context/DatosContext'
 import { coloresCategoria } from '../data/categorias'
-import { formatearFecha, detalleEstado } from '../utils/fechas'
+import { formatearFecha, detalleEstado, estadoActual } from '../utils/fechas'
 import useSEO from '../hooks/useSEO'
 
 const estilosEstado = {
+  Pendiente: { bg: 'warning-subtle', text: 'warning-emphasis' },
   Activo: { bg: 'primary-subtle', text: 'primary-emphasis' },
   Vencido: { bg: 'danger-subtle', text: 'danger-emphasis' },
   Devuelto: { bg: 'secondary-subtle', text: 'secondary-emphasis' },
 }
 
-const filtros = ['Todos', 'Activo', 'Vencido', 'Devuelto']
-const nombresFiltro = { Todos: 'Todos', Activo: 'Activos', Vencido: 'Vencidos', Devuelto: 'Devueltos' }
+const filtros = ['Todos', 'Pendiente', 'Activo', 'Vencido', 'Devuelto']
+const nombresFiltro = {
+  Todos: 'Todos',
+  Pendiente: 'Para retirar',
+  Activo: 'Activos',
+  Vencido: 'Vencidos',
+  Devuelto: 'Devueltos',
+}
 
 function Prestamos() {
-  useSEO('Préstamos', 'Seguimiento de préstamos activos, vencidos y devoluciones de la biblioteca de la UTN.')
+  useSEO('Préstamos', 'Seguimiento de solicitudes, préstamos activos, vencidos y devoluciones de la biblioteca de la UTN.')
 
   const { prestamos, alumnos, libros } = useDatos()
   const [filtro, setFiltro] = useState('Todos')
@@ -29,10 +36,10 @@ function Prestamos() {
     return alumno ? `${alumno.nombre} ${alumno.apellido}` : 'Alumno no encontrado'
   }
 
-  const lista = filtro === 'Todos' ? prestamos : prestamos.filter((p) => p.estado === filtro)
+  const lista = filtro === 'Todos' ? prestamos : prestamos.filter((p) => estadoActual(p) === filtro)
 
   function contar(estado) {
-    return estado === 'Todos' ? prestamos.length : prestamos.filter((p) => p.estado === estado).length
+    return estado === 'Todos' ? prestamos.length : prestamos.filter((p) => estadoActual(p) === estado).length
   }
 
   return (
@@ -40,7 +47,7 @@ function Prestamos() {
       <section className="hero-busqueda">
         <Container className="py-5">
           <h1 className="titulo-principal mb-3">Préstamos</h1>
-          <p className="lead mb-4">Seguí los préstamos activos, los vencidos y las devoluciones.</p>
+          <p className="lead mb-4">Seguí las solicitudes, los préstamos activos, los vencidos y las devoluciones.</p>
           <div className="d-flex flex-wrap gap-2" role="group" aria-label="Filtrar por estado">
             {filtros.map((f) => (
               <Button
@@ -73,6 +80,7 @@ function Prestamos() {
               <tbody>
                 {lista.map((p) => {
                   const libro = buscarLibro(p.libroId)
+                  const estado = estadoActual(p)
                   const detalle = detalleEstado(p)
                   return (
                     <tr key={p.id}>
@@ -91,11 +99,11 @@ function Prestamos() {
                       <td>{formatearFecha(p.fechaDevolucion)}</td>
                       <td>
                         <div className="d-flex flex-column align-items-start gap-1">
-                          <Badge pill bg={estilosEstado[p.estado].bg} text={estilosEstado[p.estado].text}>
-                            {p.estado}
+                          <Badge pill bg={estilosEstado[estado].bg} text={estilosEstado[estado].text}>
+                            {estado}
                           </Badge>
                           {detalle && (
-                            <span className={`small ${p.estado === 'Vencido' ? 'text-danger fw-semibold' : 'text-body-secondary'}`}>
+                            <span className={`small ${estado === 'Vencido' ? 'text-danger fw-semibold' : 'text-body-secondary'}`}>
                               {detalle}
                             </span>
                           )}
