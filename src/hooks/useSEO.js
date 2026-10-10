@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 
 function useSEO(titulo, descripcion) {
   useEffect(() => {
-    document.title = `${titulo} | Biblioteca UTN`
+    document.title = `${titulo} | BiblioFRT`
 
     let meta = document.querySelector('meta[name="description"]')
     if (!meta) {
