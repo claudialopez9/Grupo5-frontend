@@ -1,6 +1,7 @@
+import { Link } from 'react-router-dom'
 import { coloresCategoria } from '../data/categorias'
 
-function LibroCard({ titulo, autor, isbn, categoria, disponibles, total, children }) {
+function LibroCard({ id, titulo, autor, isbn, categoria, disponibles, total, children }) {
   const hayDisponibles = disponibles > 0
   const color = coloresCategoria[categoria] || '#3A3C42'
 
@@ -9,16 +10,18 @@ function LibroCard({ titulo, autor, isbn, categoria, disponibles, total, childre
 
   return (
     <article className="d-flex flex-column gap-3 h-100">
-      <div
-        className="tapa-libro d-flex flex-column justify-content-between text-white"
-        style={{ backgroundColor: color }}
-      >
-        <span className="small fw-semibold">{categoria}</span>
-        <div className="d-flex flex-column gap-2">
-          <h2 className="tapa-titulo mb-0">{titulo}</h2>
-          <span className="fw-medium">{autor}</span>
+      <Link to={`/catalogo/${id}`} className="text-decoration-none">
+        <div
+          className="tapa-libro d-flex flex-column justify-content-between text-white"
+          style={{ backgroundColor: color }}
+        >
+          <span className="small fw-semibold">{categoria}</span>
+          <div className="d-flex flex-column gap-2">
+            <h2 className="tapa-titulo mb-0">{titulo}</h2>
+            <span className="fw-medium">{autor}</span>
+          </div>
         </div>
-      </div>
+      </Link>
 
       <div className="d-flex flex-column gap-1">
         <div className="d-flex align-items-center gap-2">
@@ -35,6 +38,7 @@ function LibroCard({ titulo, autor, isbn, categoria, disponibles, total, childre
           </span>
         </div>
         <span className="small text-body-secondary">ISBN {isbn}</span>
+        <Link to={`/catalogo/${id}`} className="small fw-semibold">Ver detalle</Link>
       </div>
 
       {children && <div className="mt-auto">{children}</div>}
