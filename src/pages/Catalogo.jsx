@@ -140,6 +140,7 @@ function Catalogo() {
               {librosFiltrados.map((libro) => (
                 <Col key={libro.id} xs={12} sm={6} md={4} lg={3}>
                   <LibroCard
+                    id={libro.id}
                     titulo={libro.titulo}
                     autor={libro.autor}
                     isbn={libro.isbn}
