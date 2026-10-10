@@ -2,17 +2,46 @@ import { Container, Row, Col, Button } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import useSEO from '../hooks/useSEO'
 import { useDatos } from '../context/DatosContext'
+import { useSesion } from '../context/SesionContext'
 import { coloresCategoria } from '../data/categorias'
 
-const accesos = [
-  { id: 1, titulo: 'Catálogo', texto: 'Buscá libros y mirá cuántos ejemplares hay disponibles.', ruta: '/catalogo' },
-  { id: 2, titulo: 'Alumnos', texto: 'Consultá los alumnos registrados y sus préstamos.', ruta: '/alumnos' },
-  { id: 3, titulo: 'Préstamos', texto: 'Seguí préstamos activos, vencidos y devoluciones.', ruta: '/prestamos' },
-]
+// Accesos que se muestran según quién ingresó
+const accesosPorRol = {
+  visitante: [
+    { id: 1, titulo: 'Catálogo', texto: 'Buscá libros y mirá cuántos ejemplares hay disponibles.', ruta: '/catalogo' },
+    { id: 2, titulo: 'Crear cuenta', texto: 'Registrate con tu legajo para pedir libros y seguir tus préstamos.', ruta: '/registrarse' },
+    { id: 3, titulo: 'Ingresar', texto: 'Si ya tenés cuenta, entrá con tu número de legajo.', ruta: '/ingresar' },
+  ],
+  alumno: [
+    { id: 1, titulo: 'Catálogo', texto: 'Buscá libros y pedilos prestados.', ruta: '/catalogo' },
+    { id: 2, titulo: 'Mi biblioteca', texto: 'Mirá los libros que tenés, renovalos y revisá cuándo devolverlos.', ruta: '/mi-biblioteca' },
+    { id: 3, titulo: 'Sobre nosotros', texto: 'Conocé al equipo que desarrolla BiblioFRT.', ruta: '/sobre-nosotros' },
+  ],
+  bibliotecario: [
+    { id: 1, titulo: 'Panel', texto: 'Entregá solicitudes, registrá devoluciones y mirá lo que vence.', ruta: '/panel' },
+    { id: 2, titulo: 'Préstamos', texto: 'Consultá todos los préstamos y filtralos por estado.', ruta: '/prestamos' },
+    { id: 3, titulo: 'Alumnos', texto: 'Buscá alumnos registrados y mirá cuántos libros tiene cada uno.', ruta: '/alumnos' },
+  ],
+}
+
+// Segundo botón del encabezado según quién ingresó
+const botonSecundarioPorRol = {
+  visitante: { texto: 'Crear cuenta', ruta: '/registrarse' },
+  alumno: { texto: 'Mi biblioteca', ruta: '/mi-biblioteca' },
+  bibliotecario: { texto: 'Ir al panel', ruta: '/panel' },
+}
 
 function Inicio() {
-  useSEO('Inicio', 'Sistema de gestión de la biblioteca de la UTN: catálogo, alumnos y préstamos.')
+  useSEO('Inicio', 'BiblioFRT, el sistema de gestión de la biblioteca de la UTN FRT: catálogo, préstamos y alumnos.')
+
   const { libros } = useDatos()
+  const { usuario } = useSesion()
+
+  // Si no hay nadie logueado, se usa "visitante"
+  const rol = usuario ? usuario.rol : 'visitante'
+  const accesos = accesosPorRol[rol]
+  const botonSecundario = botonSecundarioPorRol[rol]
+
   return (
     <>
       <section className="hero-busqueda">
@@ -21,14 +50,14 @@ function Inicio() {
             <Col lg={6}>
               <h1 className="titulo-principal mb-3">La biblioteca de la FRT</h1>
               <p className="lead mb-4">
-                Buscá libros, mirá cuántos ejemplares quedan y gestioná alumnos y préstamos desde la compu o el celular.
+                Buscá libros, pedilos prestados y seguí tus devoluciones desde la compu o el celular.
               </p>
               <div className="d-flex flex-wrap gap-2">
                 <Button as={Link} to="/catalogo" variant="dark" size="lg">
                   Buscar un libro
                 </Button>
-                <Button as={Link} to="/prestamos" variant="outline-dark" size="lg">
-                  Ver préstamos
+                <Button as={Link} to={botonSecundario.ruta} variant="outline-dark" size="lg">
+                  {botonSecundario.texto}
                 </Button>
               </div>
             </Col>
