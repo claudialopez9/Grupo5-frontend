@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Container, Row, Col, Button } from 'react-bootstrap'
+import { Link } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import ModalPrestamo from '../components/ModalPrestamo'
 import { useDatos } from '../context/DatosContext'
@@ -168,7 +169,7 @@ function Panel() {
     confirmar({
       icon: 'warning',
       title: '¿Restablecer los datos de prueba?',
-      text: 'Se borran las solicitudes, préstamos y devoluciones hechas desde la página y se vuelve a los datos originales.',
+      text: 'Se borran las solicitudes, préstamos, devoluciones y libros agregados desde la página, y se vuelve a los datos originales.',
       confirmButtonText: 'Restablecer',
     }).then((respuesta) => {
       if (respuesta.isConfirmed) restablecerDatos()
@@ -181,9 +182,14 @@ function Panel() {
         <Container className="py-5">
           <h1 className="titulo-principal mb-3">Panel de la biblioteca</h1>
           <p className="lead mb-4">Hola, {usuario.nombre}. Esto es lo que necesita atención hoy.</p>
-          <Button variant="dark" size="lg" onClick={() => setMostrarModal(true)}>
-            Registrar préstamo
-          </Button>
+          <div className="d-flex flex-wrap gap-2">
+            <Button variant="dark" size="lg" onClick={() => setMostrarModal(true)}>
+              Registrar préstamo
+            </Button>
+            <Button as={Link} to="/panel/agregar-libro" variant="outline-dark" size="lg">
+              Agregar libros
+            </Button>
+          </div>
         </Container>
       </section>
 
