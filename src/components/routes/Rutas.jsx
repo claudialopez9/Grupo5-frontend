@@ -9,6 +9,7 @@ import SobreNosotros from '../../pages/SobreNosotros'
 import Ingresar from '../../pages/Ingresar'
 import Registrarse from '../../pages/Registrarse'
 import Panel from '../../pages/Panel'
+import AgregarLibro from '../../pages/AgregarLibro'
 import MiBiblioteca from '../../pages/MiBiblioteca'
 import NotFound from '../../pages/NotFound'
 
@@ -23,6 +24,7 @@ function Rutas() {
       <Route path="/registrarse" element={<Registrarse />} />
 
       <Route path="/panel" element={<RutaProtegida rol="bibliotecario"><Panel /></RutaProtegida>} />
+      <Route path="/panel/agregar-libro" element={<RutaProtegida rol="bibliotecario"><AgregarLibro /></RutaProtegida>} />
       <Route path="/prestamos" element={<RutaProtegida rol="bibliotecario"><Prestamos /></RutaProtegida>} />
       <Route path="/alumnos" element={<RutaProtegida rol="bibliotecario"><Alumnos /></RutaProtegida>} />
 
