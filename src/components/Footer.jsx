@@ -1,20 +1,19 @@
-function Footer() {
-  return (
-    <footer className="bg-dark text-light py-1 mt-5">
-      <div className="container d-flex flex-column flex-md-row align-items-center justify-content-between">
-        <div className="d-flex align-items-center mb-1 mb-md-0">
-          <img
-            src="/img/logo-footer.svg"
-            alt="Logo Biblioteca UTN"
-            height="60"
-            className="me-3"
-          />
-        </div>
+import { Container } from 'react-bootstrap'
 
-        <small>© 2026 Biblioteca UTN — Facultad Regional Tucumán</small>
-      </div>
+function Footer() {
+  const anio = new Date().getFullYear()
+
+  return (
+    <footer className="bg-dark text-light">
+      <Container className="py-3 d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 small">
+        <img src="/img/logo-footer.svg" alt="Logo de la Biblioteca UTN" height="60" />
+        <div className="d-flex flex-column align-items-center align-items-md-end text-center text-md-end">
+          <span>© {anio} Biblioteca UTN Facultad Regional Tucumán. Todos los derechos reservados.</span>
+          <span>BiblioFRT es un proyecto del Grupo 5</span>
+        </div>
+      </Container>
     </footer>
-  );
+  )
 }
 
-export default Footer;
+export default Footer

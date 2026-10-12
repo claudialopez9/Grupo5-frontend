@@ -1,15 +1,13 @@
 import { useState } from 'react'
 import { Container, Row, Col, Button } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-import Swal from 'sweetalert2'
 import ModalPrestamo from '../components/ModalPrestamo'
-import { useDatos } from '../context/DatosContext'
-import { useSesion } from '../context/SesionContext'
-import { coloresCategoria } from '../data/categorias'
-import { formatearFecha, diasHasta, estaVencido, estaEnPoder, detalleEstado } from '../utils/fechas'
+import LomoCategoria from '../components/LomoCategoria'
+import useDatos from '../hooks/useDatos'
+import useSesion from '../hooks/useSesion'
 import useSEO from '../hooks/useSEO'
-
-const COLOR_CONFIRMAR = '#1F2125'
+import { formatearFecha, diasHasta, estaVencido, estaEnPoder, detalleEstado } from '../utils/fechas'
+import { confirmar, avisarExito, mostrarError } from '../utils/alertas'
 
 // Una fila de préstamo. Los botones de cada lista llegan por "children"
 function FilaPrestamo({ prestamo, libro, alumno, children }) {
@@ -20,11 +18,7 @@ function FilaPrestamo({ prestamo, libro, alumno, children }) {
   return (
     <li className="d-flex flex-column flex-sm-row align-items-sm-center gap-3 py-3 border-bottom">
       <div className="d-flex align-items-center gap-3 flex-grow-1">
-        <span
-          className="lomo-mini"
-          style={{ backgroundColor: coloresCategoria[libro?.categoria] || '#3A3C42' }}
-          aria-hidden="true"
-        ></span>
+        <LomoCategoria categoria={libro?.categoria} />
         <div>
           <p className="fw-semibold mb-0">{libro ? libro.titulo : 'Libro no encontrado'}</p>
           <p className="small text-body-secondary mb-0">
@@ -84,27 +78,12 @@ function Panel() {
     .sort((a, b) => b.veces - a.veces)
     .slice(0, 5)
 
-  // Cartel de confirmación con el estilo de la página
-  function confirmar(opciones) {
-    return Swal.fire({
-      icon: 'question',
-      showCancelButton: true,
-      cancelButtonText: 'Volver',
-      confirmButtonColor: COLOR_CONFIRMAR,
-      ...opciones,
-    })
-  }
-
-  function avisarExito(titulo) {
-    Swal.fire({ icon: 'success', title: titulo, timer: 1600, showConfirmButton: false })
-  }
-
   function manejarEntrega(prestamo) {
     const libro = buscarLibro(prestamo.libroId)
     confirmar({
-      title: '¿Entregar el libro?',
-      text: `Se registra el préstamo de "${libro ? libro.titulo : 'el libro'}" con devolución en 14 días.`,
-      confirmButtonText: 'Entregar',
+      titulo: '¿Entregar el libro?',
+      texto: `Se registra el préstamo de "${libro ? libro.titulo : 'el libro'}" con devolución en 14 días.`,
+      textoBoton: 'Entregar',
     }).then((respuesta) => {
       if (respuesta.isConfirmed) {
         entregarPrestamo(prestamo.id)
@@ -115,10 +94,10 @@ function Panel() {
 
   function manejarCancelacion(prestamo) {
     confirmar({
-      icon: 'warning',
-      title: '¿Cancelar la solicitud?',
-      text: 'El ejemplar reservado vuelve a estar disponible para otra persona.',
-      confirmButtonText: 'Cancelar solicitud',
+      icono: 'warning',
+      titulo: '¿Cancelar la solicitud?',
+      texto: 'El ejemplar reservado vuelve a estar disponible para otra persona.',
+      textoBoton: 'Cancelar solicitud',
     }).then((respuesta) => {
       if (respuesta.isConfirmed) {
         cancelarSolicitud(prestamo.id)
@@ -130,9 +109,9 @@ function Panel() {
   function manejarDevolucion(prestamo) {
     const libro = buscarLibro(prestamo.libroId)
     confirmar({
-      title: '¿Registrar la devolución?',
-      text: `"${libro ? libro.titulo : 'El libro'}" va a quedar como devuelto y disponible para otro préstamo.`,
-      confirmButtonText: 'Registrar devolución',
+      titulo: '¿Registrar la devolución?',
+      texto: `"${libro ? libro.titulo : 'El libro'}" va a quedar como devuelto y disponible para otro préstamo.`,
+      textoBoton: 'Registrar devolución',
     }).then((respuesta) => {
       if (respuesta.isConfirmed) {
         registrarDevolucion(prestamo.id)
@@ -145,32 +124,21 @@ function Panel() {
   function manejarPrestamoDirecto(alumnoId, libroId) {
     const resultado = registrarPrestamoDirecto(alumnoId, libroId)
     if (!resultado.ok) {
-      Swal.fire({
-        icon: 'error',
-        title: 'No se puede registrar el préstamo',
-        text: resultado.mensaje,
-        confirmButtonText: 'Entendido',
-        confirmButtonColor: COLOR_CONFIRMAR,
-      })
+      mostrarError('No se puede registrar el préstamo', resultado.mensaje)
       return false
     }
     setMostrarModal(false)
-    Swal.fire({
-      icon: 'success',
-      title: 'Préstamo registrado',
-      text: `Devolución el ${formatearFecha(resultado.prestamo.fechaDevolucion)}.`,
-      timer: 2200,
-      showConfirmButton: false,
-    })
+    avisarExito('Préstamo registrado', `Devolución el ${formatearFecha(resultado.prestamo.fechaDevolucion)}.`)
     return true
   }
 
   function manejarRestablecer() {
     confirmar({
-      icon: 'warning',
-      title: '¿Restablecer los datos de prueba?',
-      text: 'Se borran las solicitudes, préstamos, devoluciones y libros agregados desde la página, y se vuelve a los datos originales.',
-      confirmButtonText: 'Restablecer',
+      icono: 'warning',
+      titulo: '¿Restablecer los datos de prueba?',
+      texto:
+        'Se borran las solicitudes, préstamos, devoluciones y libros agregados desde la página, y se vuelve a los datos originales.',
+      textoBoton: 'Restablecer',
     }).then((respuesta) => {
       if (respuesta.isConfirmed) restablecerDatos()
     })
@@ -178,9 +146,9 @@ function Panel() {
 
   return (
     <>
-      <section className="hero-busqueda">
+      <section className="bg-body-tertiary">
         <Container className="py-5">
-          <h1 className="titulo-principal mb-3">Panel de la biblioteca</h1>
+          <h1 className="titulo-principal display-5 fw-bold mb-3">Panel de la biblioteca</h1>
           <p className="lead mb-4">Hola, {usuario.nombre}. Esto es lo que necesita atención hoy.</p>
           <div className="d-flex flex-wrap gap-2">
             <Button variant="dark" size="lg" onClick={() => setMostrarModal(true)}>
@@ -199,7 +167,7 @@ function Panel() {
             {resumen.map((dato) => (
               <Col key={dato.id} xs={6} lg={3}>
                 <article className="border rounded-3 p-3 h-100 bg-white">
-                  <p className={`numero-panel mb-1 ${dato.alerta ? 'text-danger' : ''}`}>{dato.numero}</p>
+                  <p className={`fs-1 fw-bold lh-1 mb-1 ${dato.alerta ? 'text-danger' : ''}`}>{dato.numero}</p>
                   <p className="text-body-secondary mb-0">{dato.texto}</p>
                 </article>
               </Col>
@@ -210,13 +178,24 @@ function Panel() {
         <Row className="g-5">
           <Col lg={7}>
             <section className="mb-5" aria-labelledby="titulo-solicitudes">
-              <h2 id="titulo-solicitudes" className="fs-4 fw-bold mb-2">Solicitudes para entregar</h2>
+              <h2 id="titulo-solicitudes" className="fs-4 fw-bold mb-2">
+                Solicitudes para entregar
+              </h2>
               {solicitudes.length > 0 ? (
                 <ul className="list-unstyled mb-0">
                   {solicitudes.map((p) => (
-                    <FilaPrestamo key={p.id} prestamo={p} libro={buscarLibro(p.libroId)} alumno={buscarAlumno(p.alumnoId)}>
-                      <Button variant="dark" size="sm" onClick={() => manejarEntrega(p)}>Entregar</Button>
-                      <Button variant="outline-secondary" size="sm" onClick={() => manejarCancelacion(p)}>Cancelar</Button>
+                    <FilaPrestamo
+                      key={p.id}
+                      prestamo={p}
+                      libro={buscarLibro(p.libroId)}
+                      alumno={buscarAlumno(p.alumnoId)}
+                    >
+                      <Button variant="dark" size="sm" onClick={() => manejarEntrega(p)}>
+                        Entregar
+                      </Button>
+                      <Button variant="outline-secondary" size="sm" onClick={() => manejarCancelacion(p)}>
+                        Cancelar
+                      </Button>
                     </FilaPrestamo>
                   ))}
                 </ul>
@@ -226,12 +205,21 @@ function Panel() {
             </section>
 
             <section className="mb-5" aria-labelledby="titulo-vencidos">
-              <h2 id="titulo-vencidos" className="fs-4 fw-bold mb-2">Vencidos</h2>
+              <h2 id="titulo-vencidos" className="fs-4 fw-bold mb-2">
+                Vencidos
+              </h2>
               {vencidos.length > 0 ? (
                 <ul className="list-unstyled mb-0">
                   {vencidos.map((p) => (
-                    <FilaPrestamo key={p.id} prestamo={p} libro={buscarLibro(p.libroId)} alumno={buscarAlumno(p.alumnoId)}>
-                      <Button variant="outline-dark" size="sm" onClick={() => manejarDevolucion(p)}>Registrar devolución</Button>
+                    <FilaPrestamo
+                      key={p.id}
+                      prestamo={p}
+                      libro={buscarLibro(p.libroId)}
+                      alumno={buscarAlumno(p.alumnoId)}
+                    >
+                      <Button variant="outline-dark" size="sm" onClick={() => manejarDevolucion(p)}>
+                        Registrar devolución
+                      </Button>
                     </FilaPrestamo>
                   ))}
                 </ul>
@@ -241,12 +229,21 @@ function Panel() {
             </section>
 
             <section aria-labelledby="titulo-pronto">
-              <h2 id="titulo-pronto" className="fs-4 fw-bold mb-2">Vencen en los próximos 7 días</h2>
+              <h2 id="titulo-pronto" className="fs-4 fw-bold mb-2">
+                Vencen en los próximos 7 días
+              </h2>
               {vencenPronto.length > 0 ? (
                 <ul className="list-unstyled mb-0">
                   {vencenPronto.map((p) => (
-                    <FilaPrestamo key={p.id} prestamo={p} libro={buscarLibro(p.libroId)} alumno={buscarAlumno(p.alumnoId)}>
-                      <Button variant="outline-dark" size="sm" onClick={() => manejarDevolucion(p)}>Registrar devolución</Button>
+                    <FilaPrestamo
+                      key={p.id}
+                      prestamo={p}
+                      libro={buscarLibro(p.libroId)}
+                      alumno={buscarAlumno(p.alumnoId)}
+                    >
+                      <Button variant="outline-dark" size="sm" onClick={() => manejarDevolucion(p)}>
+                        Registrar devolución
+                      </Button>
                     </FilaPrestamo>
                   ))}
                 </ul>
@@ -258,16 +255,14 @@ function Panel() {
 
           <Col lg={5}>
             <section aria-labelledby="titulo-ranking">
-              <h2 id="titulo-ranking" className="fs-4 fw-bold mb-2">Libros más pedidos</h2>
+              <h2 id="titulo-ranking" className="fs-4 fw-bold mb-2">
+                Libros más pedidos
+              </h2>
               <ol className="list-unstyled mb-0">
                 {masPedidos.map((libro, i) => (
                   <li key={libro.id} className="d-flex align-items-center gap-3 py-2 border-bottom">
                     <span className="fw-bold text-body-secondary">{i + 1}</span>
-                    <span
-                      className="lomo-mini"
-                      style={{ backgroundColor: coloresCategoria[libro.categoria] || '#3A3C42' }}
-                      aria-hidden="true"
-                    ></span>
+                    <LomoCategoria categoria={libro.categoria} />
                     <div className="flex-grow-1">
                       <p className="fw-semibold mb-0">{libro.titulo}</p>
                       <p className="small text-body-secondary mb-0">{libro.autor}</p>
@@ -301,4 +296,3 @@ function Panel() {
 }
 
 export default Panel
-

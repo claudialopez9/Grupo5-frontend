@@ -1,9 +1,8 @@
 import { Link } from 'react-router-dom'
-import { coloresCategoria } from '../data/categorias'
+import TapaLibro from './TapaLibro'
 
 function LibroCard({ id, titulo, autor, isbn, categoria, disponibles, total, children }) {
   const hayDisponibles = disponibles > 0
-  const color = coloresCategoria[categoria] || '#3A3C42'
 
   // Un elemento por ejemplar: true si está en la biblioteca, false si está prestado
   const ejemplares = Array.from({ length: total }, (_, i) => i < disponibles)
@@ -11,16 +10,7 @@ function LibroCard({ id, titulo, autor, isbn, categoria, disponibles, total, chi
   return (
     <article className="d-flex flex-column gap-3 h-100">
       <Link to={`/catalogo/${id}`} className="text-decoration-none">
-        <div
-          className="tapa-libro d-flex flex-column justify-content-between text-white"
-          style={{ backgroundColor: color }}
-        >
-          <span className="small fw-semibold">{categoria}</span>
-          <div className="d-flex flex-column gap-2">
-            <h2 className="tapa-titulo mb-0">{titulo}</h2>
-            <span className="fw-medium">{autor}</span>
-          </div>
-        </div>
+        <TapaLibro titulo={titulo} autor={autor} categoria={categoria} etiquetaTitulo="h2" />
       </Link>
 
       <div className="d-flex flex-column gap-1">
@@ -29,7 +19,9 @@ function LibroCard({ id, titulo, autor, isbn, categoria, disponibles, total, chi
             {ejemplares.map((estaDisponible, i) => (
               <span
                 key={i}
-                className={`punto-ejemplar ${estaDisponible ? 'bg-success' : 'punto-vacio'}`}
+                className={`punto-ejemplar d-block rounded-circle ${
+                  estaDisponible ? 'bg-success' : 'border border-2 border-secondary-subtle'
+                }`}
               />
             ))}
           </span>
@@ -38,7 +30,9 @@ function LibroCard({ id, titulo, autor, isbn, categoria, disponibles, total, chi
           </span>
         </div>
         <span className="small text-body-secondary">ISBN {isbn}</span>
-        <Link to={`/catalogo/${id}`} className="small fw-semibold">Ver detalle</Link>
+        <Link to={`/catalogo/${id}`} className="small fw-semibold">
+          Ver detalle
+        </Link>
       </div>
 
       {children && <div className="mt-auto">{children}</div>}
