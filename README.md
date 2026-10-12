@@ -69,7 +69,7 @@ En React se leen con `import.meta.env.VITE_API_URL`. En Vercel están cargadas e
 - React + Vite
 - React Bootstrap y Bootstrap 5
 - React Router DOM
-- Context API (`createContext` y `useContext`)
+- Context API (`createContext` y `useContext`), con un hook propio para leer cada contexto (`useDatos` y `useSesion`)
 - Axios
 - SweetAlert2
 - Git, GitHub y Vercel
@@ -79,8 +79,8 @@ En React se leen con `import.meta.env.VITE_API_URL`. En Vercel están cargadas e
 **useState**: guarda datos que cambian con la interacción del usuario y hacen que la página se vuelva a dibujar. Por ejemplo: el texto del buscador y la categoría elegida en el Catálogo, el filtro de estado en Préstamos, los campos de los formularios, el usuario logueado, si un modal está abierto y los resultados que devuelve Open Library.
 
 **useEffect**: ejecuta código después de que el componente se dibuja.
-- En `DatosContext`, con dependencias `[]`: se ejecuta **una sola vez** al cargar la app y pide los archivos JSON con Axios.
-- También en `DatosContext`, con dependencias `[prestamos]` y `[libros]`: se ejecuta **cada vez que cambian** y guarda los datos en `localStorage`.
+- En `DatosProvider`, con dependencias `[]`: se ejecuta **una sola vez** al cargar la app y pide los archivos JSON con Axios.
+- También en `DatosProvider`, con dependencias `[prestamos, cargando]` y `[libros, cargando]`: se ejecuta **cada vez que cambian** y guarda los datos en `localStorage` (espera a que terminen de cargar para no pisarlos con una lista vacía).
 - En `LibroDetalle`, con dependencias `[isbn, titulo, autor]`: pide los datos del libro a Open Library al abrir la página y cada vez que se pasa a otro libro. Tiene una función de limpieza para ignorar respuestas que llegan tarde.
 - En `AgregarLibro`, con dependencia `[consulta]`: busca en Open Library cada vez que se envía una búsqueda nueva.
 - En el hook propio `useSEO`, con dependencias `[titulo, descripcion]`: actualiza el título de la pestaña y la descripción cada vez que se cambia de página.
@@ -123,17 +123,27 @@ public/
 ├── data/            datos de la biblioteca en JSON (libros, alumnos, préstamos, usuarios)
 └── img/             logos y fotos del equipo
 src/
-├── components/      componentes reutilizables (LibroCard, AlumnosCard, ModalPrestamo, navbar, footer)
+├── components/      componentes reutilizables (LibroCard, TapaLibro, Estante, LomoCategoria,
+│   │                AlumnosCard, ModalPrestamo, navbar y footer)
 │   └── routes/      rutas de la app y RutaProtegida
-├── context/         DatosContext (datos y acciones) y SesionContext (login)
+├── context/         DatosContext.js + DatosProvider.jsx (datos y acciones)
+│                    SesionContext.js + SesionProvider.jsx (login)
 ├── data/            colores de cada categoría
-├── hooks/           hook propio useSEO
+├── hooks/           hooks propios: useDatos, useSesion y useSEO
 ├── pages/           una página por vista
 ├── services/        peticiones a la API de Open Library (Axios)
-├── utils/           funciones de fechas
+├── utils/           funciones de fechas y avisos de SweetAlert2 (alertas.js)
+├── index.css        lo poco que Bootstrap no resuelve (colores de marca y formas de libro)
 ├── App.jsx          layout: navbar, contenido y footer (sin rutas)
 └── main.jsx         punto de entrada: router y contextos
 ```
+
+## Estilos: Bootstrap primero
+
+- Todo el diseño (espaciados, grillas, colores, tipografía, bordes, tablas, formularios y botones) se hace con clases de Bootstrap y componentes de React Bootstrap.
+- Los colores de la marca se aplican cambiando las variables de Bootstrap (`--bs-primary`, `--bs-tertiary-bg`) en `index.css`, así `bg-primary`, `bg-body-tertiary` y los links usan el naranja de la facultad sin escribir CSS nuevo.
+- `index.css` solo tiene lo que Bootstrap no trae: el lomo de los libros, el texto vertical del estante, el borde punteado del 404, la proporción de las tapas y algunos tamaños fijos chicos.
+- Los únicos `style` en línea son valores que salen de los datos (el color de cada categoría y el alto de cada lomo del estante).
 
 ## Forma de trabajo
 
