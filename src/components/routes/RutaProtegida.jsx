@@ -1,7 +1,7 @@
 import { Navigate } from 'react-router-dom'
-import { useSesion } from '../../context/SesionContext'
+import useSesion from '../../hooks/useSesion'
 
-
+// Muestra la página solo si hay alguien logueado con el rol pedido
 function RutaProtegida({ rol, children }) {
   const { usuario } = useSesion()
 

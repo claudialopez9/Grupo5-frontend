@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Container, Row, Col, Form } from 'react-bootstrap'
 import AlumnosCard from '../components/AlumnosCard'
-import { useDatos } from '../context/DatosContext'
- import { estaEnPoder } from '../utils/fechas'
+import useDatos from '../hooks/useDatos'
+import { estaEnPoder } from '../utils/fechas'
 import useSEO from '../hooks/useSEO'
 
 function Alumnos() {
@@ -17,27 +17,31 @@ function Alumnos() {
   )
 
   // Cuenta los préstamos de un alumno que todavía no devolvió
-     function contarActivos(alumnoId) {
-     return prestamos.filter((p) => p.alumnoId === alumnoId && estaEnPoder(p)).length
-   }
-
+  function contarActivos(alumnoId) {
+    return prestamos.filter((p) => p.alumnoId === alumnoId && estaEnPoder(p)).length
+  }
 
   return (
     <>
-      <section className="hero-busqueda">
+      <section className="bg-body-tertiary">
         <Container className="py-5">
-          <h1 className="titulo-principal mb-3">Alumnos</h1>
+          <h1 className="titulo-principal display-5 fw-bold mb-3">Alumnos</h1>
           <p className="lead mb-4">Consultá los alumnos registrados y cuántos préstamos tiene cada uno.</p>
-          <Form.Group controlId="buscar-alumno" className="buscador">
-            <Form.Label className="fw-semibold">Buscá por nombre, apellido o legajo</Form.Label>
-            <Form.Control
-              type="search"
-              size="lg"
-              placeholder="Ej.: Gómez o 45012"
-              value={busqueda}
-              onChange={(e) => setBusqueda(e.target.value)}
-            />
-          </Form.Group>
+          <Row>
+            <Col md={8} lg={6}>
+              <Form.Group controlId="buscar-alumno">
+                <Form.Label className="fw-semibold">Buscá por nombre, apellido o legajo</Form.Label>
+                <Form.Control
+                  type="search"
+                  size="lg"
+                  className="border-2 border-dark rounded-3"
+                  placeholder="Ej.: Gómez o 45012"
+                  value={busqueda}
+                  onChange={(e) => setBusqueda(e.target.value)}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
         </Container>
       </section>
 
@@ -62,9 +66,7 @@ function Alumnos() {
             </Row>
           </section>
         ) : (
-          <p className="text-body-secondary py-4">
-            No hay alumnos con ese nombre o legajo. Revisá cómo lo escribiste.
-          </p>
+          <p className="text-body-secondary py-4">No hay alumnos con ese nombre o legajo. Revisá cómo lo escribiste.</p>
         )}
       </Container>
     </>

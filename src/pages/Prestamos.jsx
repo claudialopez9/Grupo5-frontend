@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { Container, Table, Badge, Button } from 'react-bootstrap'
-import { useDatos } from '../context/DatosContext'
-import { coloresCategoria } from '../data/categorias'
-import { formatearFecha, detalleEstado, estadoActual } from '../utils/fechas'
+import LomoCategoria from '../components/LomoCategoria'
+import useDatos from '../hooks/useDatos'
 import useSEO from '../hooks/useSEO'
+import { formatearFecha, detalleEstado, estadoActual } from '../utils/fechas'
 
 const estilosEstado = {
   Pendiente: { bg: 'warning-subtle', text: 'warning-emphasis' },
@@ -22,7 +22,10 @@ const nombresFiltro = {
 }
 
 function Prestamos() {
-  useSEO('Préstamos', 'Seguimiento de solicitudes, préstamos activos, vencidos y devoluciones de la biblioteca de la UTN.')
+  useSEO(
+    'Préstamos',
+    'Seguimiento de solicitudes, préstamos activos, vencidos y devoluciones de la biblioteca de la UTN.'
+  )
 
   const { prestamos, alumnos, libros } = useDatos()
   const [filtro, setFiltro] = useState('Todos')
@@ -44,9 +47,9 @@ function Prestamos() {
 
   return (
     <>
-      <section className="hero-busqueda">
+      <section className="bg-body-tertiary">
         <Container className="py-5">
-          <h1 className="titulo-principal mb-3">Préstamos</h1>
+          <h1 className="titulo-principal display-5 fw-bold mb-3">Préstamos</h1>
           <p className="lead mb-4">Seguí las solicitudes, los préstamos activos, los vencidos y las devoluciones.</p>
           <div className="d-flex flex-wrap gap-2" role="group" aria-label="Filtrar por estado">
             {filtros.map((f) => (
@@ -66,55 +69,61 @@ function Prestamos() {
 
       <Container className="py-4 mb-5">
         {lista.length > 0 ? (
-          <div className="table-responsive">
-            <Table hover className="tabla-prestamos align-middle mb-0">
-              <thead>
-                <tr>
-                  <th scope="col">Libro</th>
-                  <th scope="col">Alumno</th>
-                  <th scope="col">Préstamo</th>
-                  <th scope="col">Devolución prevista</th>
-                  <th scope="col">Estado</th>
-                </tr>
-              </thead>
-              <tbody>
-                {lista.map((p) => {
-                  const libro = buscarLibro(p.libroId)
-                  const estado = estadoActual(p)
-                  const detalle = detalleEstado(p)
-                  return (
-                    <tr key={p.id}>
-                      <td>
-                        <div className="d-flex align-items-center gap-3">
+          <Table hover responsive className="align-middle mb-0">
+            <thead>
+              <tr>
+                <th scope="col" className="small fw-semibold text-body-secondary">
+                  Libro
+                </th>
+                <th scope="col" className="small fw-semibold text-body-secondary">
+                  Alumno
+                </th>
+                <th scope="col" className="small fw-semibold text-body-secondary">
+                  Préstamo
+                </th>
+                <th scope="col" className="small fw-semibold text-body-secondary">
+                  Devolución prevista
+                </th>
+                <th scope="col" className="small fw-semibold text-body-secondary">
+                  Estado
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {lista.map((p) => {
+                const libro = buscarLibro(p.libroId)
+                const estado = estadoActual(p)
+                const detalle = detalleEstado(p)
+                return (
+                  <tr key={p.id}>
+                    <td>
+                      <div className="d-flex align-items-center gap-3">
+                        <LomoCategoria categoria={libro?.categoria} />
+                        <span className="fw-semibold">{libro ? libro.titulo : 'Libro no encontrado'}</span>
+                      </div>
+                    </td>
+                    <td>{nombreAlumno(p.alumnoId)}</td>
+                    <td>{formatearFecha(p.fechaPrestamo)}</td>
+                    <td>{formatearFecha(p.fechaDevolucion)}</td>
+                    <td>
+                      <div className="d-flex flex-column align-items-start gap-1">
+                        <Badge pill bg={estilosEstado[estado].bg} text={estilosEstado[estado].text}>
+                          {estado}
+                        </Badge>
+                        {detalle && (
                           <span
-                            className="lomo-mini"
-                            style={{ backgroundColor: coloresCategoria[libro?.categoria] || '#3A3C42' }}
-                            aria-hidden="true"
-                          ></span>
-                          <span className="fw-semibold">{libro ? libro.titulo : 'Libro no encontrado'}</span>
-                        </div>
-                      </td>
-                      <td>{nombreAlumno(p.alumnoId)}</td>
-                      <td>{formatearFecha(p.fechaPrestamo)}</td>
-                      <td>{formatearFecha(p.fechaDevolucion)}</td>
-                      <td>
-                        <div className="d-flex flex-column align-items-start gap-1">
-                          <Badge pill bg={estilosEstado[estado].bg} text={estilosEstado[estado].text}>
-                            {estado}
-                          </Badge>
-                          {detalle && (
-                            <span className={`small ${estado === 'Vencido' ? 'text-danger fw-semibold' : 'text-body-secondary'}`}>
-                              {detalle}
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </Table>
-          </div>
+                            className={`small ${estado === 'Vencido' ? 'text-danger fw-semibold' : 'text-body-secondary'}`}
+                          >
+                            {detalle}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </Table>
         ) : (
           <p className="text-body-secondary py-4">No hay préstamos en este estado.</p>
         )}

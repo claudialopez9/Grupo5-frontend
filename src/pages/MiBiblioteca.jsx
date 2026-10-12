@@ -1,14 +1,12 @@
 import { Container, Row, Col, Alert, Button, Badge } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-import Swal from 'sweetalert2'
 import AlumnosCard from '../components/AlumnosCard'
-import { useDatos } from '../context/DatosContext'
-import { useSesion } from '../context/SesionContext'
-import { coloresCategoria } from '../data/categorias'
-import { formatearFecha, estaVencido, estaEnPoder, detalleEstado } from '../utils/fechas'
+import LomoCategoria from '../components/LomoCategoria'
+import useDatos from '../hooks/useDatos'
+import useSesion from '../hooks/useSesion'
 import useSEO from '../hooks/useSEO'
-
-const COLOR_CONFIRMAR = '#1F2125'
+import { formatearFecha, estaVencido, estaEnPoder, detalleEstado } from '../utils/fechas'
+import { confirmar, avisarExito, informar, mostrarError } from '../utils/alertas'
 
 function MiBiblioteca() {
   useSEO('Mi biblioteca', 'Tus préstamos, solicitudes, fechas de devolución e historial en la biblioteca de la UTN.')
@@ -36,51 +34,32 @@ function MiBiblioteca() {
 
   function manejarCancelacion(prestamo) {
     const libro = buscarLibro(prestamo.libroId)
-    Swal.fire({
-      icon: 'warning',
-      title: '¿Cancelar la solicitud?',
-      text: `Se libera el ejemplar de "${libro ? libro.titulo : 'el libro'}" para otra persona.`,
-      showCancelButton: true,
-      confirmButtonText: 'Cancelar solicitud',
-      cancelButtonText: 'Volver',
-      confirmButtonColor: COLOR_CONFIRMAR,
+    confirmar({
+      icono: 'warning',
+      titulo: '¿Cancelar la solicitud?',
+      texto: `Se libera el ejemplar de "${libro ? libro.titulo : 'el libro'}" para otra persona.`,
+      textoBoton: 'Cancelar solicitud',
     }).then((respuesta) => {
       if (respuesta.isConfirmed) {
         cancelarSolicitud(prestamo.id)
-        Swal.fire({ icon: 'success', title: 'Solicitud cancelada', timer: 1600, showConfirmButton: false })
+        avisarExito('Solicitud cancelada')
       }
     })
   }
 
   function manejarRenovacion(prestamo) {
-    Swal.fire({
-      icon: 'question',
-      title: '¿Renovar el préstamo?',
-      text: 'La devolución se extiende 7 días. Cada préstamo se puede renovar una sola vez.',
-      showCancelButton: true,
-      confirmButtonText: 'Renovar',
-      cancelButtonText: 'Volver',
-      confirmButtonColor: COLOR_CONFIRMAR,
+    confirmar({
+      titulo: '¿Renovar el préstamo?',
+      texto: 'La devolución se extiende 7 días. Cada préstamo se puede renovar una sola vez.',
+      textoBoton: 'Renovar',
     }).then((respuesta) => {
       if (!respuesta.isConfirmed) return
 
       const resultado = renovarPrestamo(prestamo.id)
       if (resultado.ok) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Préstamo renovado',
-          text: `Nueva fecha de devolución: ${formatearFecha(resultado.nuevaFecha)}.`,
-          confirmButtonText: 'Entendido',
-          confirmButtonColor: COLOR_CONFIRMAR,
-        })
+        informar('Préstamo renovado', `Nueva fecha de devolución: ${formatearFecha(resultado.nuevaFecha)}.`)
       } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'No se pudo renovar',
-          text: resultado.mensaje,
-          confirmButtonText: 'Entendido',
-          confirmButtonColor: COLOR_CONFIRMAR,
-        })
+        mostrarError('No se pudo renovar', resultado.mensaje)
       }
     })
   }
@@ -95,11 +74,11 @@ function MiBiblioteca() {
 
   return (
     <>
-      <section className="hero-busqueda">
+      <section className="bg-body-tertiary">
         <Container className="py-5">
           <Row className="g-4 align-items-center">
             <Col lg={7}>
-              <h1 className="titulo-principal mb-3">Mi biblioteca</h1>
+              <h1 className="titulo-principal display-5 fw-bold mb-3">Mi biblioteca</h1>
               <p className="lead mb-0">
                 Hola, {alumno.nombre}. Acá ves los libros que pediste, los que tenés y cuándo tenés que devolverlos.
               </p>
@@ -131,17 +110,15 @@ function MiBiblioteca() {
 
         {pendientes.length > 0 && (
           <section className="mb-5" aria-labelledby="titulo-para-retirar">
-            <h2 id="titulo-para-retirar" className="fs-3 fw-bold mb-3">Para retirar</h2>
+            <h2 id="titulo-para-retirar" className="fs-3 fw-bold mb-3">
+              Para retirar
+            </h2>
             <ul className="list-unstyled mb-0">
               {pendientes.map((p) => {
                 const libro = buscarLibro(p.libroId)
                 return (
                   <li key={p.id} className="d-flex flex-wrap align-items-center gap-3 py-3 border-bottom">
-                    <span
-                      className="lomo-mini"
-                      style={{ backgroundColor: coloresCategoria[libro?.categoria] || '#3A3C42' }}
-                      aria-hidden="true"
-                    ></span>
+                    <LomoCategoria categoria={libro?.categoria} />
                     <div className="flex-grow-1">
                       <p className="fw-semibold mb-0">{libro ? libro.titulo : 'Libro no encontrado'}</p>
                       <p className="small text-body-secondary mb-0">
@@ -159,7 +136,9 @@ function MiBiblioteca() {
         )}
 
         <section className="mb-5" aria-labelledby="titulo-mis-libros">
-          <h2 id="titulo-mis-libros" className="fs-3 fw-bold mb-3">Libros que tengo</h2>
+          <h2 id="titulo-mis-libros" className="fs-3 fw-bold mb-3">
+            Libros que tengo
+          </h2>
           {enPoder.length > 0 ? (
             <ul className="list-unstyled mb-0">
               {enPoder.map((p) => {
@@ -167,11 +146,7 @@ function MiBiblioteca() {
                 const vencido = estaVencido(p)
                 return (
                   <li key={p.id} className="d-flex flex-wrap align-items-center gap-3 py-3 border-bottom">
-                    <span
-                      className="lomo-mini"
-                      style={{ backgroundColor: coloresCategoria[libro?.categoria] || '#3A3C42' }}
-                      aria-hidden="true"
-                    ></span>
+                    <LomoCategoria categoria={libro?.categoria} />
                     <div className="flex-grow-1">
                       <p className="fw-semibold mb-0">{libro ? libro.titulo : 'Libro no encontrado'}</p>
                       <p className="small text-body-secondary mb-0">{libro?.autor}</p>
@@ -190,7 +165,9 @@ function MiBiblioteca() {
                       </Button>
                     )}
                     {p.renovado && (
-                      <Badge pill bg="secondary-subtle" text="secondary-emphasis">Renovado</Badge>
+                      <Badge pill bg="secondary-subtle" text="secondary-emphasis">
+                        Renovado
+                      </Badge>
                     )}
                   </li>
                 )
@@ -199,27 +176,29 @@ function MiBiblioteca() {
           ) : (
             <div className="py-2">
               <p className="text-body-secondary">No tenés libros en este momento.</p>
-              <Button as={Link} to="/catalogo" variant="dark">Buscar un libro</Button>
+              <Button as={Link} to="/catalogo" variant="dark">
+                Buscar un libro
+              </Button>
             </div>
           )}
         </section>
 
         <section aria-labelledby="titulo-historial">
-          <h2 id="titulo-historial" className="fs-3 fw-bold mb-3">Historial</h2>
+          <h2 id="titulo-historial" className="fs-3 fw-bold mb-3">
+            Historial
+          </h2>
           {devueltos.length > 0 ? (
             <ul className="list-unstyled mb-0">
               {devueltos.map((p) => {
                 const libro = buscarLibro(p.libroId)
                 return (
                   <li key={p.id} className="d-flex align-items-center gap-3 py-3 border-bottom">
-                    <span
-                      className="lomo-mini"
-                      style={{ backgroundColor: coloresCategoria[libro?.categoria] || '#3A3C42' }}
-                      aria-hidden="true"
-                    ></span>
+                    <LomoCategoria categoria={libro?.categoria} />
                     <div className="flex-grow-1">
                       <p className="fw-semibold mb-0">{libro ? libro.titulo : 'Libro no encontrado'}</p>
-                      <p className="small text-body-secondary mb-0">Lo retiraste el {formatearFecha(p.fechaPrestamo)}</p>
+                      <p className="small text-body-secondary mb-0">
+                        Lo retiraste el {formatearFecha(p.fechaPrestamo)}
+                      </p>
                     </div>
                     <span className="small text-body-secondary">Devuelto</span>
                   </li>

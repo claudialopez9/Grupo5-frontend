@@ -27,7 +27,9 @@ function ModalPrestamo({ show, onHide, alumnos, libros, onRegistrar }) {
     <Modal show={show} onHide={cerrar} centered enforceFocus={false}>
       <Form onSubmit={manejarEnvio}>
         <Modal.Header closeButton>
-          <Modal.Title as="h2" className="fs-4 fw-bold">Registrar préstamo</Modal.Title>
+          <Modal.Title as="h2" className="fs-4 fw-bold">
+            Registrar préstamo
+          </Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
@@ -64,8 +66,12 @@ function ModalPrestamo({ show, onHide, alumnos, libros, onRegistrar }) {
         </Modal.Body>
 
         <Modal.Footer>
-          <Button variant="outline-secondary" onClick={cerrar}>Cancelar</Button>
-          <Button type="submit" variant="dark">Registrar préstamo</Button>
+          <Button variant="outline-secondary" onClick={cerrar}>
+            Cancelar
+          </Button>
+          <Button type="submit" variant="dark">
+            Registrar préstamo
+          </Button>
         </Modal.Footer>
       </Form>
     </Modal>

@@ -1,7 +1,7 @@
-import { createContext, useContext, useState } from 'react'
-import { useDatos } from './DatosContext'
+import { useState } from 'react'
+import { SesionContext } from './SesionContext'
+import useDatos from '../hooks/useDatos'
 
-const SesionContext = createContext(null)
 const CLAVE_SESION = 'bibliofrt-sesion'
 
 function leerSesionGuardada() {
@@ -20,7 +20,7 @@ function armarSesion(usuario, alumno) {
   }
 }
 
-export function SesionProvider({ children }) {
+function SesionProvider({ children }) {
   const { usuarios, alumnos, agregarRegistro } = useDatos()
   const [usuario, setUsuario] = useState(leerSesionGuardada)
 
@@ -31,9 +31,7 @@ export function SesionProvider({ children }) {
 
   // Devuelve la sesión si los datos coinciden, o null si no
   function ingresar(nombreUsuario, password) {
-    const encontrado = usuarios.find(
-      (u) => u.usuario === nombreUsuario.trim() && u.password === password
-    )
+    const encontrado = usuarios.find((u) => u.usuario === nombreUsuario.trim() && u.password === password)
     if (!encontrado) return null
 
     const alumno = alumnos.find((a) => a.id === encontrado.alumnoId)
@@ -58,13 +56,7 @@ export function SesionProvider({ children }) {
     return { ok: true, sesion }
   }
 
-  return (
-    <SesionContext.Provider value={{ usuario, ingresar, salir, registrarse }}>
-      {children}
-    </SesionContext.Provider>
-  )
+  return <SesionContext.Provider value={{ usuario, ingresar, salir, registrarse }}>{children}</SesionContext.Provider>
 }
 
-export function useSesion() {
-  return useContext(SesionContext)
-}
+export default SesionProvider

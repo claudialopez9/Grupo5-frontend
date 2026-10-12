@@ -1,9 +1,8 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Container, Spinner, Alert } from 'react-bootstrap'
 import axios from 'axios'
 import { fechaHoy, sumarDias, estaVencido, estaEnPoder } from '../utils/fechas'
-
-const DatosContext = createContext(null)
+import { DatosContext } from './DatosContext'
 
 const CLAVE_REGISTROS = 'bibliofrt-registros'
 const CLAVE_PRESTAMOS = 'bibliofrt-prestamos'
@@ -32,7 +31,7 @@ async function pedirJSON(ruta) {
   return response.data
 }
 
-export function DatosProvider({ children }) {
+function DatosProvider({ children }) {
   const [libros, setLibros] = useState([])
   const [alumnos, setAlumnos] = useState([])
   const [prestamos, setPrestamos] = useState([])
@@ -203,9 +202,7 @@ export function DatosProvider({ children }) {
     if (!prestamo || !estaEnPoder(prestamo)) return
 
     setPrestamos((anteriores) =>
-      anteriores.map((p) =>
-        p.id === prestamoId ? { ...p, estado: 'Devuelto', fechaDevolucionReal: fechaHoy() } : p
-      )
+      anteriores.map((p) => (p.id === prestamoId ? { ...p, estado: 'Devuelto', fechaDevolucionReal: fechaHoy() } : p))
     )
     cambiarDisponibles(prestamo.libroId, 1)
   }
@@ -251,7 +248,9 @@ export function DatosProvider({ children }) {
     return (
       <Container className="py-5">
         <Alert variant="danger">
-          <Alert.Heading as="h1" className="fs-4">No pudimos cargar los datos</Alert.Heading>
+          <Alert.Heading as="h1" className="fs-4">
+            No pudimos cargar los datos
+          </Alert.Heading>
           <p className="mb-0">{error}. Recargá la página para intentarlo de nuevo.</p>
         </Alert>
       </Container>
@@ -281,6 +280,4 @@ export function DatosProvider({ children }) {
   )
 }
 
-export function useDatos() {
-  return useContext(DatosContext)
-}
+export default DatosProvider

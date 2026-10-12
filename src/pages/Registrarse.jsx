@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { Container, Row, Col, Form, Button } from 'react-bootstrap'
-import { Link, Navigate, useNavigate } from 'react-router-dom'
-import Swal from 'sweetalert2'
-import { useSesion } from '../context/SesionContext'
+import { Link, Navigate } from 'react-router-dom'
+import useSesion from '../hooks/useSesion'
 import useSEO from '../hooks/useSEO'
+import { avisarExito, mostrarError } from '../utils/alertas'
 
 const carreras = [
   'Ing. en Sistemas',
@@ -28,19 +28,15 @@ function Registrarse() {
   useSEO('Registrarse', 'Creá tu cuenta de alumno en BiblioFRT con tu número de legajo.')
 
   const { usuario, registrarse } = useSesion()
-  const navigate = useNavigate()
   const [formulario, setFormulario] = useState(formularioVacio)
 
-  if (usuario) return <Navigate to="/" replace />
+  // Si hay alguien logueado (recién se registró o ya estaba), lo mandamos a su página según el rol
+  if (usuario) return <Navigate to={usuario.rol === 'bibliotecario' ? '/panel' : '/mi-biblioteca'} replace />
 
   // Un solo manejador para todos los campos: usa el "name" del input
   function actualizarCampo(e) {
     const { name, value } = e.target
     setFormulario({ ...formulario, [name]: value })
-  }
-
-  function mostrarError(titulo, texto) {
-    Swal.fire({ icon: 'error', title: titulo, text: texto, confirmButtonText: 'Entendido', confirmButtonColor: '#1F2125' })
   }
 
   function manejarEnvio(e) {
@@ -65,22 +61,15 @@ function Registrarse() {
       return
     }
 
-    Swal.fire({
-      icon: 'success',
-      title: `¡Listo, ${resultado.sesion.nombre}!`,
-      text: 'Tu cuenta quedó creada. Desde ahora ingresás con tu legajo.',
-      timer: 2200,
-      showConfirmButton: false,
-    })
-    navigate('/')
+    avisarExito(`¡Listo, ${resultado.sesion.nombre}!`, 'Tu cuenta quedó creada. Desde ahora ingresás con tu legajo.')
   }
 
   return (
-    <section className="hero-busqueda">
+    <section className="bg-body-tertiary">
       <Container className="py-5">
         <Row className="justify-content-center">
           <Col md={10} lg={7}>
-            <h1 className="titulo-principal mb-3">Crear cuenta</h1>
+            <h1 className="titulo-principal display-5 fw-bold mb-3">Crear cuenta</h1>
             <p className="lead mb-4">Registrate con tu legajo para ver tus préstamos y fechas de devolución.</p>
 
             <Form onSubmit={manejarEnvio} className="bg-white border rounded-3 p-4">
@@ -88,19 +77,42 @@ function Registrarse() {
                 <Col md={6}>
                   <Form.Group controlId="nombre">
                     <Form.Label className="fw-semibold">Nombre</Form.Label>
-                    <Form.Control type="text" name="nombre" required minLength={2} value={formulario.nombre} onChange={actualizarCampo} />
+                    <Form.Control
+                      type="text"
+                      name="nombre"
+                      required
+                      minLength={2}
+                      value={formulario.nombre}
+                      onChange={actualizarCampo}
+                    />
                   </Form.Group>
                 </Col>
                 <Col md={6}>
                   <Form.Group controlId="apellido">
                     <Form.Label className="fw-semibold">Apellido</Form.Label>
-                    <Form.Control type="text" name="apellido" required minLength={2} value={formulario.apellido} onChange={actualizarCampo} />
+                    <Form.Control
+                      type="text"
+                      name="apellido"
+                      required
+                      minLength={2}
+                      value={formulario.apellido}
+                      onChange={actualizarCampo}
+                    />
                   </Form.Group>
                 </Col>
                 <Col md={6}>
                   <Form.Group controlId="legajo">
                     <Form.Label className="fw-semibold">Legajo</Form.Label>
-                    <Form.Control type="number" name="legajo" required min={10000} max={99999} placeholder="Ej.: 45012" value={formulario.legajo} onChange={actualizarCampo} />
+                    <Form.Control
+                      type="number"
+                      name="legajo"
+                      required
+                      min={10000}
+                      max={99999}
+                      placeholder="Ej.: 45012"
+                      value={formulario.legajo}
+                      onChange={actualizarCampo}
+                    />
                     <Form.Text>Va a ser tu usuario para ingresar.</Form.Text>
                   </Form.Group>
                 </Col>
@@ -110,7 +122,9 @@ function Registrarse() {
                     <Form.Select name="carrera" required value={formulario.carrera} onChange={actualizarCampo}>
                       <option value="">Elegí tu carrera</option>
                       {carreras.map((carrera) => (
-                        <option key={carrera} value={carrera}>{carrera}</option>
+                        <option key={carrera} value={carrera}>
+                          {carrera}
+                        </option>
                       ))}
                     </Form.Select>
                   </Form.Group>
@@ -118,20 +132,43 @@ function Registrarse() {
                 <Col xs={12}>
                   <Form.Group controlId="correo">
                     <Form.Label className="fw-semibold">Correo electrónico</Form.Label>
-                    <Form.Control type="email" name="correo" required placeholder="nombre@ejemplo.com" value={formulario.correo} onChange={actualizarCampo} />
+                    <Form.Control
+                      type="email"
+                      name="correo"
+                      required
+                      placeholder="nombre@ejemplo.com"
+                      value={formulario.correo}
+                      onChange={actualizarCampo}
+                    />
                   </Form.Group>
                 </Col>
                 <Col md={6}>
                   <Form.Group controlId="password-nueva">
                     <Form.Label className="fw-semibold">Contraseña</Form.Label>
-                    <Form.Control type="password" name="password" required minLength={4} autoComplete="new-password" value={formulario.password} onChange={actualizarCampo} />
+                    <Form.Control
+                      type="password"
+                      name="password"
+                      required
+                      minLength={4}
+                      autoComplete="new-password"
+                      value={formulario.password}
+                      onChange={actualizarCampo}
+                    />
                     <Form.Text>Mínimo 4 caracteres.</Form.Text>
                   </Form.Group>
                 </Col>
                 <Col md={6}>
                   <Form.Group controlId="confirmacion">
                     <Form.Label className="fw-semibold">Repetí la contraseña</Form.Label>
-                    <Form.Control type="password" name="confirmacion" required minLength={4} autoComplete="new-password" value={formulario.confirmacion} onChange={actualizarCampo} />
+                    <Form.Control
+                      type="password"
+                      name="confirmacion"
+                      required
+                      minLength={4}
+                      autoComplete="new-password"
+                      value={formulario.confirmacion}
+                      onChange={actualizarCampo}
+                    />
                   </Form.Group>
                 </Col>
               </Row>
