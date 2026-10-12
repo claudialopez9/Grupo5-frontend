@@ -1,34 +1,23 @@
-import { Container, Navbar, Nav, Button } from "react-bootstrap";
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import { useSesion } from "../context/SesionContext";
+import { Container, Navbar, Nav, Button } from 'react-bootstrap'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
+import useSesion from '../hooks/useSesion'
 
 function AppNavbar() {
-  const { usuario, salir } = useSesion();
-  const navigate = useNavigate();
+  const { usuario, salir } = useSesion()
+  const navigate = useNavigate()
 
-  const esBibliotecario = usuario?.rol === "bibliotecario";
-  const esAlumno = usuario?.rol === "alumno";
+  const esBibliotecario = usuario?.rol === 'bibliotecario'
+  const esAlumno = usuario?.rol === 'alumno'
 
   function manejarSalida() {
-    salir();
-    navigate("/");
+    salir()
+    navigate('/')
   }
 
   return (
-    <Navbar
-      expand="md"
-      bg="dark"
-      data-bs-theme="dark"
-      sticky="top"
-      collapseOnSelect
-      className="navbar-bibliofrt border-bottom py-2"
-    >
+    <Navbar expand="md" bg="dark" data-bs-theme="dark" sticky="top" collapseOnSelect className="border-bottom py-2">
       <Container>
-        <Navbar.Brand
-          as={Link}
-          to="/"
-          className="marca d-flex align-items-center gap-2"
-        >
+        <Navbar.Brand as={Link} to="/" className="d-flex align-items-center gap-2 fs-4 fw-bold">
           <img src="/img/logo-navbar.svg" alt="Logo de la UTN" height="40" />
           BiblioFRT
         </Navbar.Brand>
@@ -42,11 +31,7 @@ function AppNavbar() {
               Catálogo
             </Nav.Link>
             {esAlumno && (
-              <Nav.Link
-                as={NavLink}
-                to="/mi-biblioteca"
-                eventKey="mi-biblioteca"
-              >
+              <Nav.Link as={NavLink} to="/mi-biblioteca" eventKey="mi-biblioteca">
                 Mi biblioteca
               </Nav.Link>
             )}
@@ -63,11 +48,7 @@ function AppNavbar() {
                 </Nav.Link>
               </>
             )}
-            <Nav.Link
-              as={NavLink}
-              to="/sobre-nosotros"
-              eventKey="sobre-nosotros"
-            >
+            <Nav.Link as={NavLink} to="/sobre-nosotros" eventKey="sobre-nosotros">
               Sobre Nosotros
             </Nav.Link>
             {usuario ? (
@@ -93,7 +74,7 @@ function AppNavbar() {
         </Navbar.Collapse>
       </Container>
     </Navbar>
-  );
+  )
 }
 
-export default AppNavbar;
+export default AppNavbar

@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
 import { Container, Row, Col, Form, Button, Spinner, Modal } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-import Swal from 'sweetalert2'
-import { useDatos } from '../context/DatosContext'
+import TapaLibro from '../components/TapaLibro'
+import useDatos from '../hooks/useDatos'
+import useSEO from '../hooks/useSEO'
 import { coloresCategoria } from '../data/categorias'
 import { buscarEnOpenLibrary, urlTapa } from '../services/openLibrary'
-import useSEO from '../hooks/useSEO'
+import { informar, mostrarError } from '../utils/alertas'
 
 const categorias = Object.keys(coloresCategoria)
-const COLOR_CONFIRMAR = '#1F2125'
 const formularioVacio = { isbn: '', categoria: '', total: '1' }
 
 // Elige un ISBN de 13 dígitos si hay; si no, el primero que tenga
@@ -41,13 +41,10 @@ function AgregarLibro() {
         console.error(err)
         if (!cancelado) {
           setBusqueda({ consulta, resultados: [], error: true })
-          Swal.fire({
-            icon: 'error',
-            title: 'No pudimos buscar en Open Library',
-            text: 'Hubo un problema de conexión. Revisá tu internet e intentá de nuevo.',
-            confirmButtonText: 'Entendido',
-            confirmButtonColor: COLOR_CONFIRMAR,
-          })
+          mostrarError(
+            'No pudimos buscar en Open Library',
+            'Hubo un problema de conexión. Revisá tu internet e intentá de nuevo.'
+          )
         }
       }
     }
@@ -102,59 +99,55 @@ function AgregarLibro() {
     })
 
     if (!resultado.ok) {
-      Swal.fire({
-        icon: 'error',
-        title: 'No se pudo agregar el libro',
-        text: resultado.mensaje,
-        confirmButtonText: 'Entendido',
-        confirmButtonColor: COLOR_CONFIRMAR,
-      })
+      mostrarError('No se pudo agregar el libro', resultado.mensaje)
       return
     }
 
     cerrarFormulario()
-    Swal.fire({
-      icon: 'success',
-      title: 'Libro agregado',
-      text: `"${resultado.libro.titulo}" ya está en el catálogo con ${resultado.libro.total} ejemplares.`,
-      confirmButtonText: 'Entendido',
-      confirmButtonColor: COLOR_CONFIRMAR,
-    })
+    informar(
+      'Libro agregado',
+      `"${resultado.libro.titulo}" ya está en el catálogo con ${resultado.libro.total} ejemplares.`
+    )
   }
 
   return (
     <>
-      <section className="hero-busqueda">
+      <section className="bg-body-tertiary">
         <Container className="py-5">
-          <Link to="/panel" className="d-inline-block mb-4 fw-semibold">Volver al panel</Link>
-          <h1 className="titulo-principal mb-3">Agregar libros</h1>
-          <p className="lead mb-4">
-            Buscá en Open Library el libro que llegó a la biblioteca y sumalo al catálogo.
-          </p>
-          <Form onSubmit={manejarBusqueda} className="buscador">
-            <Form.Group controlId="buscar-open-library">
-              <Form.Label className="fw-semibold">Título, autor o tema</Form.Label>
-              <div className="d-flex gap-2">
-                <Form.Control
-                  type="search"
-                  size="lg"
-                  required
-                  minLength={3}
-                  placeholder="Ej.: algoritmos, Kernighan, redes"
-                  value={texto}
-                  onChange={(e) => setTexto(e.target.value)}
-                />
-                <Button type="submit" variant="dark" size="lg">Buscar</Button>
-              </div>
-            </Form.Group>
-          </Form>
+          <Link to="/panel" className="d-inline-block mb-4 fw-semibold">
+            Volver al panel
+          </Link>
+          <h1 className="titulo-principal display-5 fw-bold mb-3">Agregar libros</h1>
+          <p className="lead mb-4">Buscá en Open Library el libro que llegó a la biblioteca y sumalo al catálogo.</p>
+          <Row>
+            <Col md={8} lg={6}>
+              <Form onSubmit={manejarBusqueda}>
+                <Form.Group controlId="buscar-open-library">
+                  <Form.Label className="fw-semibold">Título, autor o tema</Form.Label>
+                  <div className="d-flex gap-2">
+                    <Form.Control
+                      type="search"
+                      size="lg"
+                      required
+                      minLength={3}
+                      placeholder="Ej.: algoritmos, Kernighan, redes"
+                      className="border-2 border-dark rounded-3"
+                      value={texto}
+                      onChange={(e) => setTexto(e.target.value)}
+                    />
+                    <Button type="submit" variant="dark" size="lg">
+                      Buscar
+                    </Button>
+                  </div>
+                </Form.Group>
+              </Form>
+            </Col>
+          </Row>
         </Container>
       </section>
 
       <Container className="py-5 mb-4">
-        {consulta === '' && (
-          <p className="text-body-secondary">Escribí un título, autor o tema y tocá Buscar.</p>
-        )}
+        {consulta === '' && <p className="text-body-secondary">Escribí un título, autor o tema y tocá Buscar.</p>}
 
         {cargando && (
           <div className="d-flex align-items-center gap-3 text-body-secondary">
@@ -164,9 +157,7 @@ function AgregarLibro() {
         )}
 
         {esDeEstaConsulta && !huboError && resultados.length === 0 && (
-          <p className="text-body-secondary">
-            No encontramos libros para "{consulta}". Probá con otras palabras.
-          </p>
+          <p className="text-body-secondary">No encontramos libros para "{consulta}". Probá con otras palabras.</p>
         )}
 
         {resultados.length > 0 && (
@@ -186,17 +177,10 @@ function AgregarLibro() {
                           src={tapa}
                           alt={`Tapa de ${libro.title}`}
                           loading="lazy"
-                          className="w-100 rounded-3"
-                          style={{ aspectRatio: '2 / 3', objectFit: 'cover', backgroundColor: '#E7E6E3' }}
+                          className="proporcion-tapa object-fit-cover w-100 rounded-3 bg-body-secondary"
                         />
                       ) : (
-                        <div
-                          className="tapa-libro d-flex align-items-end text-white"
-                          style={{ backgroundColor: '#3A3C42', height: 'auto', aspectRatio: '2 / 3' }}
-                          aria-hidden="true"
-                        >
-                          <span className="tapa-titulo fs-6">{libro.title}</span>
-                        </div>
+                        <TapaLibro titulo={libro.title} aria-hidden="true" />
                       )}
                       <h2 className="fs-6 fw-bold mb-0">{libro.title}</h2>
                       <p className="small text-body-secondary mb-0">
@@ -209,7 +193,12 @@ function AgregarLibro() {
                             Ya está en el catálogo
                           </Button>
                         ) : (
-                          <Button variant="outline-dark" size="sm" className="w-100" onClick={() => abrirFormulario(libro)}>
+                          <Button
+                            variant="outline-dark"
+                            size="sm"
+                            className="w-100"
+                            onClick={() => abrirFormulario(libro)}
+                          >
                             Agregar al catálogo
                           </Button>
                         )}
@@ -227,7 +216,9 @@ function AgregarLibro() {
         {elegido && (
           <Form onSubmit={manejarAlta}>
             <Modal.Header closeButton>
-              <Modal.Title as="h2" className="fs-4 fw-bold">Agregar al catálogo</Modal.Title>
+              <Modal.Title as="h2" className="fs-4 fw-bold">
+                Agregar al catálogo
+              </Modal.Title>
             </Modal.Header>
             <Modal.Body>
               <p className="fw-semibold mb-1">{elegido.title}</p>
@@ -254,7 +245,9 @@ function AgregarLibro() {
                 <Form.Select name="categoria" required value={formulario.categoria} onChange={actualizarCampo}>
                   <option value="">Elegí una categoría</option>
                   {categorias.map((cat) => (
-                    <option key={cat} value={cat}>{cat}</option>
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
                   ))}
                 </Form.Select>
               </Form.Group>
@@ -273,8 +266,12 @@ function AgregarLibro() {
               </Form.Group>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="outline-secondary" onClick={cerrarFormulario}>Cancelar</Button>
-              <Button type="submit" variant="dark">Agregar libro</Button>
+              <Button variant="outline-secondary" onClick={cerrarFormulario}>
+                Cancelar
+              </Button>
+              <Button type="submit" variant="dark">
+                Agregar libro
+              </Button>
             </Modal.Footer>
           </Form>
         )}

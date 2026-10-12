@@ -5,7 +5,8 @@ const API_URL = import.meta.env.VITE_API_URL
 const COVERS_URL = import.meta.env.VITE_COVERS_URL
 
 // Datos que le pedimos a Open Library de cada libro
-const CAMPOS = 'key,title,author_name,first_publish_year,number_of_pages_median,publisher,subject,cover_i,edition_count,isbn'
+const CAMPOS =
+  'key,title,author_name,first_publish_year,number_of_pages_median,publisher,subject,cover_i,edition_count,isbn'
 
 // "Sears y Zemansky" -> "Sears" (Open Library busca mejor con un solo autor)
 function primerAutor(autor) {
@@ -14,11 +15,7 @@ function primerAutor(autor) {
 
 // Busca un libro del catálogo. Prueba tres formas y devuelve el primer resultado, o null si no lo encuentra
 export async function buscarLibro({ isbn, titulo, autor }) {
-  const intentos = [
-    { isbn },
-    { title: titulo, author: primerAutor(autor) },
-    { q: `${titulo} ${primerAutor(autor)}` },
-  ]
+  const intentos = [{ isbn }, { title: titulo, author: primerAutor(autor) }, { q: `${titulo} ${primerAutor(autor)}` }]
 
   for (const filtro of intentos) {
     const response = await axios.get(`${API_URL}/search.json`, {
