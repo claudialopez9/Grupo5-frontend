@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { Container, Spinner, Alert } from 'react-bootstrap'
+import axios from 'axios'
 import { fechaHoy, sumarDias, estaVencido, estaEnPoder } from '../utils/fechas'
 
 const DatosContext = createContext(null)
@@ -25,13 +26,10 @@ function leerGuardado(clave) {
   return guardado ? JSON.parse(guardado) : null
 }
 
-// Pide un archivo JSON y avisa si la respuesta no fue exitosa
+// Pide un archivo JSON con Axios (si falla, Axios lanza un error que atrapa el catch)
 async function pedirJSON(ruta) {
-  const respuesta = await fetch(ruta)
-  if (!respuesta.ok) {
-    throw new Error(`No se pudo cargar ${ruta} (código ${respuesta.status})`)
-  }
-  return respuesta.json()
+  const response = await axios.get(ruta)
+  return response.data
 }
 
 export function DatosProvider({ children }) {
@@ -58,7 +56,7 @@ export function DatosProvider({ children }) {
         setPrestamos(leerGuardado(CLAVE_PRESTAMOS) ?? datosPrestamos)
         setUsuarios([...datosUsuarios, ...registros.usuarios])
       } catch (err) {
-        setError(err.message)
+        setError(`No se pudieron cargar los datos (${err.message})`)
       } finally {
         setCargando(false)
       }
@@ -73,7 +71,7 @@ export function DatosProvider({ children }) {
     }
   }, [prestamos, cargando])
 
-  // 3) Cada vez que cambian los libros (ejemplares disponibles), se guardan en el navegador
+  // 3) Cada vez que cambian los libros, se guardan en el navegador
   useEffect(() => {
     if (!cargando) {
       localStorage.setItem(CLAVE_LIBROS, JSON.stringify(libros))
@@ -97,6 +95,16 @@ export function DatosProvider({ children }) {
       })
     )
     return { nuevoAlumno, nuevoUsuario }
+  }
+
+  // Agrega un libro nuevo al catálogo (por ejemplo, uno encontrado en Open Library)
+  function agregarLibro({ titulo, autor, isbn, categoria, total }) {
+    if (libros.some((libro) => libro.isbn === isbn)) {
+      return { ok: false, mensaje: 'Ya hay un libro con ese ISBN en el catálogo.' }
+    }
+    const nuevo = { id: Date.now(), titulo, autor, isbn, categoria, disponibles: total, total }
+    setLibros((anteriores) => [...anteriores, nuevo])
+    return { ok: true, libro: nuevo }
   }
 
   // Suma o resta ejemplares disponibles de un libro, sin pasar de 0 ni del total
@@ -258,6 +266,7 @@ export function DatosProvider({ children }) {
         prestamos,
         usuarios,
         agregarRegistro,
+        agregarLibro,
         solicitarPrestamo,
         entregarPrestamo,
         cancelarSolicitud,

@@ -5,14 +5,14 @@ const API_URL = import.meta.env.VITE_API_URL
 const COVERS_URL = import.meta.env.VITE_COVERS_URL
 
 // Datos que le pedimos a Open Library de cada libro
-const CAMPOS = 'key,title,author_name,first_publish_year,number_of_pages_median,publisher,subject,cover_i,edition_count'
+const CAMPOS = 'key,title,author_name,first_publish_year,number_of_pages_median,publisher,subject,cover_i,edition_count,isbn'
 
 // "Sears y Zemansky" -> "Sears" (Open Library busca mejor con un solo autor)
 function primerAutor(autor) {
   return autor.split(' y ')[0]
 }
 
-// Busca un libro en Open Library. Prueba tres formas y devuelve el primer resultado, o null si no lo encuentra
+// Busca un libro del catálogo. Prueba tres formas y devuelve el primer resultado, o null si no lo encuentra
 export async function buscarLibro({ isbn, titulo, autor }) {
   const intentos = [
     { isbn },
@@ -29,6 +29,14 @@ export async function buscarLibro({ isbn, titulo, autor }) {
     }
   }
   return null
+}
+
+// Búsqueda libre (título, autor o tema) para incorporar libros nuevos al catálogo
+export async function buscarEnOpenLibrary(texto) {
+  const response = await axios.get(`${API_URL}/search.json`, {
+    params: { q: texto, limit: 12, fields: CAMPOS },
+  })
+  return response.data.docs
 }
 
 // Dirección de la imagen de la tapa ('S' chica, 'M' mediana, 'L' grande)
