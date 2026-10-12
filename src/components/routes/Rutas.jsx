@@ -23,12 +23,47 @@ function Rutas() {
       <Route path="/ingresar" element={<Ingresar />} />
       <Route path="/registrarse" element={<Registrarse />} />
 
-      <Route path="/panel" element={<RutaProtegida rol="bibliotecario"><Panel /></RutaProtegida>} />
-      <Route path="/panel/agregar-libro" element={<RutaProtegida rol="bibliotecario"><AgregarLibro /></RutaProtegida>} />
-      <Route path="/prestamos" element={<RutaProtegida rol="bibliotecario"><Prestamos /></RutaProtegida>} />
-      <Route path="/alumnos" element={<RutaProtegida rol="bibliotecario"><Alumnos /></RutaProtegida>} />
+      <Route
+        path="/panel"
+        element={
+          <RutaProtegida rol="bibliotecario">
+            <Panel />
+          </RutaProtegida>
+        }
+      />
+      <Route
+        path="/panel/agregar-libro"
+        element={
+          <RutaProtegida rol="bibliotecario">
+            <AgregarLibro />
+          </RutaProtegida>
+        }
+      />
+      <Route
+        path="/prestamos"
+        element={
+          <RutaProtegida rol="bibliotecario">
+            <Prestamos />
+          </RutaProtegida>
+        }
+      />
+      <Route
+        path="/alumnos"
+        element={
+          <RutaProtegida rol="bibliotecario">
+            <Alumnos />
+          </RutaProtegida>
+        }
+      />
 
-      <Route path="/mi-biblioteca" element={<RutaProtegida rol="alumno"><MiBiblioteca /></RutaProtegida>} />
+      <Route
+        path="/mi-biblioteca"
+        element={
+          <RutaProtegida rol="alumno">
+            <MiBiblioteca />
+          </RutaProtegida>
+        }
+      />
 
       <Route path="*" element={<NotFound />} />
     </Routes>
