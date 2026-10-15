@@ -94,7 +94,7 @@ function LibroDetalle() {
           <Link to="/catalogo" className="d-inline-block mb-4 fw-semibold">
             Volver al catálogo
           </Link>
-          <Row className="g-5 align-items-center">
+          <Row className="g-4 g-lg-5 align-items-center">
             <Col xs={8} sm={5} md={4} lg={3}>
               {tapa ? (
                 <img

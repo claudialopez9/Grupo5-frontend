@@ -175,7 +175,7 @@ function Panel() {
           </Row>
         </section>
 
-        <Row className="g-5">
+        <Row className="g-4 g-lg-5">
           <Col lg={7}>
             <section className="mb-5" aria-labelledby="titulo-solicitudes">
               <h2 id="titulo-solicitudes" className="fs-4 fw-bold mb-2">

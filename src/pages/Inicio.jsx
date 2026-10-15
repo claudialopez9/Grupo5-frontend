@@ -76,7 +76,7 @@ function Inicio() {
     <>
       <section className="bg-body-tertiary">
         <Container className="py-5">
-          <Row className="align-items-end g-5">
+          <Row className="align-items-end g-4 g-lg-5">
             <Col lg={6}>
               <h1 className="titulo-principal display-5 fw-bold mb-3">La biblioteca de la FRT</h1>
               <p className="lead mb-4">
