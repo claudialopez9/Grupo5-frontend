@@ -17,7 +17,7 @@ function NotFound() {
 
   return (
     <Container className="py-5 my-lg-4">
-      <Row className="align-items-center g-5">
+      <Row className="align-items-center g-4 g-lg-5">
         <Col lg={6}>
           <p className="fw-semibold text-body-secondary mb-2">Error 404</p>
           <h1 className="titulo-principal display-5 fw-bold mb-3">No encontramos esta página</h1>
