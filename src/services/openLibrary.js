@@ -13,19 +13,27 @@ function primerAutor(autor) {
   return autor.split(' y ')[0]
 }
 
-// Busca un libro del catálogo. Prueba tres formas y devuelve el primer resultado, o null si no lo encuentra
-export async function buscarLibro({ isbn, titulo, autor }) {
-  const intentos = [{ isbn }, { title: titulo, author: primerAutor(autor) }, { q: `${titulo} ${primerAutor(autor)}` }]
+// Hace una búsqueda en Open Library y devuelve el primer resultado, o null si no encontró nada
+async function buscarPrimero(filtro) {
+  const response = await axios.get(`${API_URL}/search.json`, {
+    params: { ...filtro, limit: 1, fields: CAMPOS },
+  })
+  return response.data.docs[0] ?? null
+}
 
-  for (const filtro of intentos) {
-    const response = await axios.get(`${API_URL}/search.json`, {
-      params: { ...filtro, limit: 1, fields: CAMPOS },
-    })
-    if (response.data.docs.length > 0) {
-      return response.data.docs[0]
-    }
-  }
-  return null
+// Busca un libro del catálogo probando tres formas, una después de la otra.
+// Si una encuentra el libro, ya no se hacen las siguientes. Si hay un error de conexión,
+// Axios lo lanza y lo atrapa el try/catch del useEffect que llamó a esta función
+export async function buscarLibro({ isbn, titulo, autor }) {
+  const autorPrincipal = primerAutor(autor)
+
+  const porIsbn = await buscarPrimero({ isbn })
+  if (porIsbn) return porIsbn
+
+  const porTituloYAutor = await buscarPrimero({ title: titulo, author: autorPrincipal })
+  if (porTituloYAutor) return porTituloYAutor
+
+  return buscarPrimero({ q: `${titulo} ${autorPrincipal}` })
 }
 
 // Búsqueda libre (título, autor o tema) para incorporar libros nuevos al catálogo
