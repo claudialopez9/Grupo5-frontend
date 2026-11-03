@@ -3,8 +3,6 @@ import { Container, Row, Col, Button } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import ModalPrestamo from '../components/ModalPrestamo'
 import LomoCategoria from '../components/LomoCategoria'
-import useDatos from '../hooks/useDatos'
-import useSesion from '../hooks/useSesion'
 import useSEO from '../hooks/useSEO'
 import { formatearFecha, diasHasta, estaVencido, estaEnPoder, detalleEstado } from '../utils/fechas'
 import { confirmar, avisarExito, mostrarError } from '../utils/alertas'
@@ -38,20 +36,19 @@ function FilaPrestamo({ prestamo, libro, alumno, children }) {
   )
 }
 
-function Panel() {
+function Panel({
+  usuario,
+  libros,
+  alumnos,
+  prestamos,
+  entregarPrestamo,
+  cancelarSolicitud,
+  registrarDevolucion,
+  registrarPrestamoDirecto,
+  restablecerDatos,
+}) {
   useSEO('Panel', 'Resumen diario de préstamos, solicitudes y vencimientos de la biblioteca de la UTN.')
 
-  const {
-    prestamos,
-    libros,
-    alumnos,
-    entregarPrestamo,
-    cancelarSolicitud,
-    registrarDevolucion,
-    registrarPrestamoDirecto,
-    restablecerDatos,
-  } = useDatos()
-  const { usuario } = useSesion()
   const [mostrarModal, setMostrarModal] = useState(false)
 
   const buscarLibro = (id) => libros.find((libro) => libro.id === id)

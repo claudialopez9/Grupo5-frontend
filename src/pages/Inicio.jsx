@@ -1,8 +1,6 @@
 import { Container, Row, Col, Button, ListGroup } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import Estante from '../components/Estante'
-import useDatos from '../hooks/useDatos'
-import useSesion from '../hooks/useSesion'
 import useSEO from '../hooks/useSEO'
 import { colorDeCategoria } from '../data/categorias'
 
@@ -52,11 +50,8 @@ const botonSecundarioPorRol = {
   bibliotecario: { texto: 'Ir al panel', ruta: '/panel' },
 }
 
-function Inicio() {
+function Inicio({ libros, usuario }) {
   useSEO('Inicio', 'BiblioFRT, el sistema de gestión de la biblioteca de la UTN FRT: catálogo, préstamos y alumnos.')
-
-  const { libros } = useDatos()
-  const { usuario } = useSesion()
 
   // Si no hay nadie logueado, se usa "visitante"
   const rol = usuario ? usuario.rol : 'visitante'
