@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Container, Table, Badge, Button } from 'react-bootstrap'
 import LomoCategoria from '../components/LomoCategoria'
-import useDatos from '../hooks/useDatos'
 import useSEO from '../hooks/useSEO'
 import { formatearFecha, detalleEstado, estadoActual } from '../utils/fechas'
 
@@ -21,13 +20,12 @@ const nombresFiltro = {
   Devuelto: 'Devueltos',
 }
 
-function Prestamos() {
+function Prestamos({ prestamos, alumnos, libros }) {
   useSEO(
     'Préstamos',
     'Seguimiento de solicitudes, préstamos activos, vencidos y devoluciones de la biblioteca de la UTN.'
   )
 
-  const { prestamos, alumnos, libros } = useDatos()
   const [filtro, setFiltro] = useState('Todos')
 
   function buscarLibro(id) {

@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { Container, Row, Col, Form, Button, Spinner, Modal } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import TapaLibro from '../components/TapaLibro'
-import useDatos from '../hooks/useDatos'
 import useSEO from '../hooks/useSEO'
 import { coloresCategoria } from '../data/categorias'
 import { buscarEnOpenLibrary, urlTapa } from '../services/openLibrary'
@@ -16,10 +15,8 @@ function elegirIsbn(libro) {
   return libro.isbn?.find((isbn) => isbn.length === 13) ?? libro.isbn?.[0] ?? ''
 }
 
-function AgregarLibro() {
+function AgregarLibro({ libros, agregarLibro }) {
   useSEO('Agregar libros', 'Buscá libros en Open Library y sumalos al catálogo de la biblioteca.')
-
-  const { libros, agregarLibro } = useDatos()
 
   const [texto, setTexto] = useState('')
   const [consulta, setConsulta] = useState('')

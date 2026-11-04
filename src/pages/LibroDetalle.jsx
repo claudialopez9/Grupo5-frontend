@@ -2,14 +2,12 @@ import { Fragment, useEffect, useState } from 'react'
 import { Container, Row, Col, Spinner, Badge, Alert } from 'react-bootstrap'
 import { Link, useParams } from 'react-router-dom'
 import TapaLibro from '../components/TapaLibro'
-import useDatos from '../hooks/useDatos'
 import useSEO from '../hooks/useSEO'
 import { buscarLibro, urlTapa, urlObra } from '../services/openLibrary'
 import { mostrarError } from '../utils/alertas'
 
-function LibroDetalle() {
+function LibroDetalle({ libros }) {
   const { id } = useParams()
-  const { libros } = useDatos()
   const libro = libros.find((l) => l.id === Number(id))
 
   useSEO(
