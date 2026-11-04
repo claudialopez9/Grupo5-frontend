@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Container, Row, Col, Form, Button } from 'react-bootstrap'
 import { Link, Navigate } from 'react-router-dom'
-import useSesion from '../hooks/useSesion'
 import useSEO from '../hooks/useSEO'
 import { avisarExito, mostrarError } from '../utils/alertas'
 
@@ -24,10 +23,9 @@ const formularioVacio = {
   confirmacion: '',
 }
 
-function Registrarse() {
+function Registrarse({ usuario, registrarse }) {
   useSEO('Registrarse', 'Creá tu cuenta de alumno en BiblioFRT con tu número de legajo.')
 
-  const { usuario, registrarse } = useSesion()
   const [formulario, setFormulario] = useState(formularioVacio)
 
   // Si hay alguien logueado (recién se registró o ya estaba), lo mandamos a su página según el rol

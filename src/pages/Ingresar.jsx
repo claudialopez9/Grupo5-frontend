@@ -1,14 +1,12 @@
 import { useState } from 'react'
 import { Container, Row, Col, Form, Button } from 'react-bootstrap'
 import { Link, Navigate } from 'react-router-dom'
-import useSesion from '../hooks/useSesion'
 import useSEO from '../hooks/useSEO'
 import { avisarExito, mostrarError } from '../utils/alertas'
 
-function Ingresar() {
+function Ingresar({ usuario, ingresar }) {
   useSEO('Ingresar', 'Ingresá a BiblioFRT con tu número de legajo o con el usuario de la biblioteca.')
 
-  const { usuario, ingresar } = useSesion()
   const [nombreUsuario, setNombreUsuario] = useState('')
   const [password, setPassword] = useState('')
 

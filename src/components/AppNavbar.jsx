@@ -1,9 +1,7 @@
 import { Container, Navbar, Nav, Button } from 'react-bootstrap'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
-import useSesion from '../hooks/useSesion'
 
-function AppNavbar() {
-  const { usuario, salir } = useSesion()
+function AppNavbar({ usuario, salir }) {
   const navigate = useNavigate()
 
   const esBibliotecario = usuario?.rol === 'bibliotecario'
