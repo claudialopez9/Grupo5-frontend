@@ -69,20 +69,22 @@ En React se leen con `import.meta.env.VITE_API_URL`. En Vercel están cargadas e
 - React + Vite
 - React Bootstrap y Bootstrap 5
 - React Router DOM
-- Context API (`createContext` y `useContext`), con un hook propio para leer cada contexto (`useDatos` y `useSesion`)
+- Estado con `useState` en `Rutas.jsx`, compartido con las páginas por props
 - Axios
 - SweetAlert2
 - Git, GitHub y Vercel
 
 ## Hooks utilizados
 
-**useState**: guarda datos que cambian con la interacción del usuario y hacen que la página se vuelva a dibujar. Por ejemplo: el texto del buscador y la categoría elegida en el Catálogo, el filtro de estado en Préstamos, los campos de los formularios, el usuario logueado, si un modal está abierto y los resultados que devuelve Open Library.
+**useState**: guarda datos que cambian con la interacción del usuario y hacen que la página se vuelva a dibujar. Por ejemplo: el texto del buscador y la categoría elegida en el Catálogo, el filtro de estado en Préstamos, los campos de los formularios, si un modal está abierto y los resultados que devuelve Open Library.
+
+Los datos que usan varias páginas (libros, alumnos, préstamos, usuarios y el usuario logueado) están en `useState` dentro de `Rutas.jsx`. Desde ahí bajan por **props** a la navbar y a cada página, junto con las funciones que los modifican (solicitar, entregar, devolver, renovar, ingresar, salir, etc.).
 
 **useEffect**: ejecuta código después de que el componente se dibuja.
-- En `DatosProvider`, con dependencias `[]`: se ejecuta **una sola vez** al cargar la app y pide los archivos JSON con Axios.
-- También en `DatosProvider`, con dependencias `[prestamos, cargando]` y `[libros, cargando]`: se ejecuta **cada vez que cambian** y guarda los datos en `localStorage` (espera a que terminen de cargar para no pisarlos con una lista vacía).
-- En `LibroDetalle`, con dependencias `[isbn, titulo, autor]`: pide los datos del libro a Open Library al abrir la página y cada vez que se pasa a otro libro. Tiene una función de limpieza para ignorar respuestas que llegan tarde.
-- En `AgregarLibro`, con dependencia `[consulta]`: busca en Open Library cada vez que se envía una búsqueda nueva.
+- En `Rutas`, con dependencias `[]`: se ejecuta **una sola vez** al cargar la app y pide los archivos JSON con Axios, dentro de un bloque `try/catch`.
+- También en `Rutas`, con dependencias `[prestamos, cargando]` y `[libros, cargando]`: se ejecuta **cada vez que cambian** y guarda los datos en `localStorage` (espera a que terminen de cargar para no pisarlos con una lista vacía).
+- En `LibroDetalle`, con dependencias `[isbn, titulo, autor]`: pide los datos del libro a Open Library (con `try/catch`) al abrir la página y cada vez que se pasa a otro libro. Tiene una función de limpieza para ignorar respuestas que llegan tarde.
+- En `AgregarLibro`, con dependencia `[consulta]`: busca en Open Library (con `try/catch`) cada vez que se envía una búsqueda nueva.
 - En el hook propio `useSEO`, con dependencias `[titulo, descripcion]`: actualiza el título de la pestaña y la descripción cada vez que se cambia de página.
 
 ## Estrategias SEO
@@ -125,17 +127,15 @@ public/
 src/
 ├── components/      componentes reutilizables (LibroCard, TapaLibro, Estante, LomoCategoria,
 │   │                AlumnosCard, ModalPrestamo, navbar y footer)
-│   └── routes/      rutas de la app y RutaProtegida
-├── context/         DatosContext.js + DatosProvider.jsx (datos y acciones)
-│                    SesionContext.js + SesionProvider.jsx (login)
+│   └── routes/      Rutas (estado de la app con useState, navbar y rutas) y RutaProtegida
 ├── data/            colores de cada categoría
-├── hooks/           hooks propios: useDatos, useSesion y useSEO
-├── pages/           una página por vista
-├── services/        peticiones a la API de Open Library (Axios)
-├── utils/           funciones de fechas y avisos de SweetAlert2 (alertas.js)
+├── hooks/           hook propio useSEO
+├── pages/           una página por vista (reciben los datos por props)
+├── services/        peticiones con Axios: JSON de la biblioteca y API de Open Library
+├── utils/           fechas, reglas de préstamo, localStorage y avisos de SweetAlert2
 ├── index.css        lo poco que Bootstrap no resuelve (colores de marca y formas de libro)
-├── App.jsx          layout: navbar, contenido y footer (sin rutas)
-└── main.jsx         punto de entrada: router y contextos
+├── App.jsx          layout: Rutas y footer
+└── main.jsx         punto de entrada: router y App
 ```
 
 ## Estilos: Bootstrap primero

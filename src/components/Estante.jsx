@@ -1,7 +1,5 @@
-// Estante de libros: lomos de colores parados sobre una tabla.
-// Cada lomo es { id, titulo, color, alto, ancho, vacio }. "vacio: true" dibuja un hueco punteado.
-// Si no recibe "etiqueta", el estante es decorativo y los lectores de pantalla lo saltean.
-// Cada lomo mide "ancho" px, pero en pantallas chicas se angosta (flexShrink) para que entren todos.
+// Estante de libros
+
 function Estante({ lomos, etiqueta }) {
   return (
     <div className="mw-100">

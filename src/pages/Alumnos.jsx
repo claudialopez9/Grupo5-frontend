@@ -1,14 +1,12 @@
 import { useState } from 'react'
 import { Container, Row, Col, Form } from 'react-bootstrap'
 import AlumnosCard from '../components/AlumnosCard'
-import useDatos from '../hooks/useDatos'
 import { estaEnPoder } from '../utils/fechas'
 import useSEO from '../hooks/useSEO'
 
-function Alumnos() {
+function Alumnos({ alumnos, prestamos }) {
   useSEO('Alumnos', 'Listado de alumnos registrados en la biblioteca de la UTN y sus préstamos activos.')
 
-  const { alumnos, prestamos } = useDatos()
   const [busqueda, setBusqueda] = useState('')
   const texto = busqueda.trim().toLowerCase()
 

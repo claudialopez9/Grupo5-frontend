@@ -2,16 +2,12 @@ import { useState } from 'react'
 import { Container, Row, Col, Form, Button } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import LibroCard from '../components/LibroCard'
-import useDatos from '../hooks/useDatos'
-import useSesion from '../hooks/useSesion'
 import useSEO from '../hooks/useSEO'
 import { confirmar, informar, mostrarError } from '../utils/alertas'
 
-function Catalogo() {
+function Catalogo({ libros, prestamos, usuario, solicitarPrestamo }) {
   useSEO('Catálogo de libros', 'Consultá el catálogo de la biblioteca de la UTN y la disponibilidad de cada libro.')
 
-  const { libros, prestamos, solicitarPrestamo } = useDatos()
-  const { usuario } = useSesion()
   const esAlumno = usuario?.rol === 'alumno'
 
   // Lista de categorías sin repetir, con "Todas" al principio

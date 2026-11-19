@@ -2,17 +2,12 @@ import { Container, Row, Col, Alert, Button, Badge } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import AlumnosCard from '../components/AlumnosCard'
 import LomoCategoria from '../components/LomoCategoria'
-import useDatos from '../hooks/useDatos'
-import useSesion from '../hooks/useSesion'
 import useSEO from '../hooks/useSEO'
 import { formatearFecha, estaVencido, estaEnPoder, detalleEstado } from '../utils/fechas'
 import { confirmar, avisarExito, informar, mostrarError } from '../utils/alertas'
 
-function MiBiblioteca() {
+function MiBiblioteca({ usuario, alumnos, prestamos, libros, cancelarSolicitud, renovarPrestamo }) {
   useSEO('Mi biblioteca', 'Tus préstamos, solicitudes, fechas de devolución e historial en la biblioteca de la UTN.')
-
-  const { usuario } = useSesion()
-  const { alumnos, prestamos, libros, cancelarSolicitud, renovarPrestamo } = useDatos()
 
   // Datos del alumno que ingresó
   const alumno = alumnos.find((a) => a.id === usuario.alumnoId)
